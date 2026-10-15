@@ -2,3 +2,6 @@
 /rust/target/
 /results/*-quick.*
 __pycache__/
+/results/quick-*
+/results/full-*
+/results/review-*
