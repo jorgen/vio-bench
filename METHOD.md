@@ -5,14 +5,27 @@ says exactly what that work is. An implementation that does something else is a 
 
 ## Libraries
 
-| library | version | language | notes |
-|---------|---------|----------|-------|
-| vio | pinned commit, see `cpp/vio/CMakeLists.txt` | C++23 | run twice: `VIO_BACKEND=epoll` and `VIO_BACKEND=io_uring` |
-| libuv | v1.53.0 | C | TLS through OpenSSL memory BIOs, since libuv has none |
-| Asio | 1.38.2, standalone | C++ | TLS through `asio::ssl` (OpenSSL) |
-| Tokio | 1.53 | Rust | TLS through rustls, and again through tokio-openssl |
+| target | version | sockets | files | TLS |
+|--------|---------|---------|-------|-----|
+| vio (epoll) | pinned commit, see `cpp/vio/CMakeLists.txt` | epoll | vio's thread pool | BoringSSL, bundled |
+| vio (io_uring) | same | io_uring readiness | io_uring | BoringSSL, bundled |
+| libuv | v1.53.0 | epoll | libuv's thread pool | OpenSSL through memory BIOs; libuv has no TLS |
+| libuv (io_uring) | same, `UV_USE_IO_URING=1` | not run | io_uring with SQPOLL | not run |
+| asio | 1.38.2, standalone | epoll | io_uring (`asio::random_access_file` needs it) | OpenSSL through `asio::ssl` |
+| asio (io_uring) | same, `ASIO_DISABLE_EPOLL` | io_uring | io_uring | OpenSSL through `asio::ssl` |
+| tokio | 1.53 | epoll (mio) | Tokio's blocking pool, 4 threads | rustls |
+| tokio (openssl) | same | epoll (mio) | not run | OpenSSL through tokio-openssl |
 
-C++ is built with GCC 14 at `-O3` (`CMAKE_BUILD_TYPE=Release`). Rust is built with
+Two kinds of row compare more than event loops, and should be read that way. The file rows
+compare io_uring with thread pools: a page-cache read served inside `io_uring_enter` beats any
+thread handoff, whichever library makes it. The TLS rows compare BoringSSL, OpenSSL 3 and
+rustls with aws-lc as much as they compare loops; `tls_library` in each result names the one
+used.
+
+Each implementation's choices that an expert might question are in its `NOTES.md`
+(`cpp/vio`, `cpp/libuv`, `cpp/asio`, `rust`). Read them before reading a number.
+
+C++ is built with GCC 14 at `-O3` (`CMAKE_BUILD_TYPE=Release`), without LTO. Rust is built with
 `--release`, `lto = "thin"` and `codegen-units = 1`. OpenSSL is the system's; vio brings its
 own BoringSSL.
 
@@ -21,11 +34,14 @@ own BoringSSL.
 1. **One thread per side.** Every workload that has a client and a server runs each on its own
    thread with its own event loop: a `vio::event_loop_t`, a `uv_loop_t`, an `asio::io_context`,
    or a Tokio `current_thread` runtime. Nothing is shared between the two except the address the
-   server listens on.
+   server listens on and, where a server must be told to stop, a flag.
 2. **Idiomatic API only.** I/O goes through the library. Setting a socket option through the
    native handle is allowed; reading or writing the socket around the library is not.
 3. **Same socket options.** TCP sockets set `TCP_NODELAY` on both ends. UDP sockets set
    `SO_SNDBUF` and `SO_RCVBUF` to 4 MiB. Nothing else is changed from the library's default.
+   The kernel silently caps both buffers at `net.core.wmem_max` and `net.core.rmem_max`, so the
+   host must allow 4 MiB (`sysctl -w net.core.rmem_max=4194304 net.core.wmem_max=4194304`); the
+   runner records both values with the results.
 4. **Loopback only.** Servers bind `127.0.0.1` port 0 and hand the chosen port to the client.
 5. **The runner owns the parameters.** Every parameter comes on the command line; a binary has
    no defaults of its own and refuses to run if one is missing.
@@ -78,7 +94,8 @@ Work: `requests`, `bytes` (response bytes the client received in the window).
 Parameters: `bytes`, `chunk`.
 
 The client writes `bytes` in writes of `chunk` bytes, one write in flight at a time, then shuts
-down its sending side. The server reads with a 64 KiB buffer and discards, until end of stream.
+down its sending side, or closes the socket if the library has no half-close (vio). The server
+reads with a 64 KiB buffer and discards, until end of stream.
 The time runs from the client's first write to the server seeing end of stream.
 
 Metrics: `mib_per_s`, `cpu_s`. Work: `bytes` (what the server received).
@@ -103,7 +120,9 @@ Parameters: `seconds`.
 The client, one connection at a time: connects, completes a full TLS 1.3 handshake, closes.
 Session tickets and session caches are off on both sides, so no handshake resumes. The server
 accepts, completes the handshake and closes when the client does. Certificates, group and cipher
-as for `tls_bulk`.
+as for `tls_bulk`. How the client closes differs by library (sending `close_notify` and moving
+on, or waiting for the server's reply); each `NOTES.md` says which, and the difference is about
+one loopback round trip on a handshake of one to two milliseconds.
 
 Metrics: `handshakes_per_s`, `p50_us`, `p99_us` (connect start to handshake done, client side),
 `cpu_s`. Work: `handshakes`.
@@ -115,9 +134,11 @@ Parameters: `size`, `seconds`, `batch`.
 The sender sends datagrams of `size` bytes as fast as the API allows, for `seconds`. Each starts
 with a 64-bit sequence number. With `batch=0` both sides use the library's ordinary per-datagram
 calls, awaiting each send when the call is asynchronous. With `batch=N` both sides use the
-library's batch calls (`sendmmsg`, segmentation offload, `recvmmsg`, coalesced receive) with up
-to `N` datagrams per call; a library without them exits with status 2. The receiver stops 200 ms
-after the sender's last datagram.
+library's batch calls (`sendmmsg` or segmentation offload to send, `recvmmsg` to receive) with
+up to `N` datagrams per call; a library without them exits with status 2. Rule 3 rules out
+turning on offloads through the native handle, so a library that does not offer them in its own
+API does not get them. The receiver stops once it has seen nothing for 200 ms after the sender
+finished.
 
 Metrics: `sent_per_s`, `received_per_s`, `loss_pct`. Work: `sent`, `received`.
 

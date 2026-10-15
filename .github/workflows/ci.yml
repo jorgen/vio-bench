@@ -31,6 +31,9 @@ jobs:
           rustup toolchain install stable --profile minimal
           cargo build --release --manifest-path rust/Cargo.toml
 
+      - name: Allow 4 MiB UDP buffers
+        run: sudo sysctl -w net.core.rmem_max=4194304 net.core.wmem_max=4194304
+
       - name: Smoke run
         run: python3 scripts/run.py --quick --name ci
 

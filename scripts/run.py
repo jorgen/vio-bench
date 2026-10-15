@@ -4,6 +4,7 @@ import datetime
 import json
 import os
 import platform
+import re
 import shutil
 import socket
 import statistics
@@ -47,6 +48,23 @@ def expected_work(workload, params):
     return {}
 
 
+def check_run(workload, params, run):
+    problems = []
+    work = run.get("work", {})
+    for key, value in expected_work(workload, params).items():
+        if work.get(key) != value:
+            problems.append(f"work.{key} is {work.get(key)}, expected {value}")
+    if workload == "tcp_rr":
+        requests, received = work.get("requests"), work.get("bytes")
+        if isinstance(requests, int) and isinstance(received, int) and received != requests * int(params["size"]):
+            problems.append(f"work.bytes {received} is not requests x size ({requests} x {params['size']})")
+    if workload == "udp_flood":
+        sent, received = work.get("sent"), work.get("received")
+        if isinstance(sent, int) and isinstance(received, int) and received > sent:
+            problems.append(f"received {received} more datagrams than were sent ({sent})")
+    return problems
+
+
 def quick_params(params, quick):
     out = dict(params)
     if "seconds" in out:
@@ -60,25 +78,49 @@ def quick_params(params, quick):
 
 
 def format_value(value):
-    if isinstance(value, float):
-        if value != value:
-            return "nan"
-        if abs(value) >= 100:
-            return f"{value:,.0f}"
-        if abs(value) >= 10:
-            return f"{value:.1f}"
-        return f"{value:.2f}"
-    return str(value)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, float) and value != value:
+        return "nan"
+    if abs(value) >= 100:
+        return f"{value:,.0f}"
+    if abs(value) >= 10:
+        return f"{value:.1f}"
+    if isinstance(value, int):
+        return str(value)
+    return f"{value:.2f}"
 
 
 def command_output(command):
     try:
-        return subprocess.run(command, capture_output=True, text=True, timeout=30).stdout.strip().splitlines()[0]
+        lines = subprocess.run(command, capture_output=True, text=True, timeout=30).stdout.strip().splitlines()
+        return lines[0] if lines else "unknown"
     except Exception:
         return "unknown"
 
 
-def machine_info():
+def read_text(path):
+    try:
+        with open(path) as f:
+            return f.read().strip()
+    except OSError:
+        return "unknown"
+
+
+def cmake_cache(build_dir):
+    values = {}
+    try:
+        with open(os.path.join(build_dir, "CMakeCache.txt")) as f:
+            for line in f:
+                match = re.match(r"^(CMAKE_CXX_COMPILER|CMAKE_BUILD_TYPE|CMAKE_CXX_FLAGS|CMAKE_CXX_FLAGS_RELEASE):[A-Z]+=(.*)$", line)
+                if match:
+                    values[match.group(1)] = match.group(2).strip()
+    except OSError:
+        pass
+    return values
+
+
+def machine_info(cpp_build):
     cpu = "unknown"
     try:
         with open("/proc/cpuinfo") as f:
@@ -97,6 +139,8 @@ def machine_info():
                     break
     except OSError:
         pass
+    cache = cmake_cache(cpp_build)
+    compiler = cache.get("CMAKE_CXX_COMPILER") or os.environ.get("CXX", "g++-14")
     return {
         "host": socket.gethostname(),
         "date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
@@ -105,7 +149,12 @@ def machine_info():
         "cpu": cpu,
         "cpus": os.cpu_count(),
         "memory": memory,
-        "cxx": command_output([os.environ.get("CXX", "g++-14"), "--version"]),
+        "governor": read_text("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"),
+        "rmem_max": read_text("/proc/sys/net/core/rmem_max"),
+        "wmem_max": read_text("/proc/sys/net/core/wmem_max"),
+        "io_uring_disabled": read_text("/proc/sys/kernel/io_uring_disabled"),
+        "cxx": command_output([compiler, "--version"]),
+        "cxx_build": f"{cache.get('CMAKE_BUILD_TYPE', 'unknown')} {cache.get('CMAKE_CXX_FLAGS', '')} {cache.get('CMAKE_CXX_FLAGS_RELEASE', '')}".strip(),
         "rustc": command_output(["rustc", "--version"]),
         "python": platform.python_version(),
     }
@@ -113,70 +162,91 @@ def machine_info():
 
 def run_once(binary, workload, params, env, cwd, timeout):
     command = [binary, workload] + [f"{k}={v}" for k, v in params.items()]
+    load_before = os.getloadavg()[0]
     try:
         proc = subprocess.run(command, capture_output=True, text=True, env=env, cwd=cwd, timeout=timeout)
     except subprocess.TimeoutExpired:
-        return {"status": "failed", "error": f"timed out after {timeout} s"}
+        return {"status": "failed", "error": f"timed out after {timeout} s", "load": load_before}
+    load = max(load_before, os.getloadavg()[0])
     if proc.returncode == 2:
-        return {"status": "unsupported", "error": proc.stderr.strip()[-500:]}
+        return {"status": "unsupported", "error": proc.stderr.strip()[-500:], "load": load}
     if proc.returncode != 0:
-        return {"status": "failed", "error": f"exit {proc.returncode}: {proc.stderr.strip()[-1500:]}"}
+        return {"status": "failed", "error": f"exit {proc.returncode}: {proc.stderr.strip()[-1500:]}", "load": load}
     lines = [line for line in proc.stdout.strip().splitlines() if line.strip()]
     if not lines:
-        return {"status": "failed", "error": "no output"}
+        return {"status": "failed", "error": "no output", "load": load}
     try:
         result = json.loads(lines[-1])
     except json.JSONDecodeError as error:
-        return {"status": "failed", "error": f"bad JSON: {error}: {lines[-1][:300]}"}
+        return {"status": "failed", "error": f"bad JSON: {error}: {lines[-1][:300]}", "load": load}
     result["status"] = "ok"
+    result["load"] = load
     return result
 
 
-def aggregate(runs):
+def aggregate(workload, params, runs):
     ok = [r for r in runs if r["status"] == "ok"]
+    problems = []
+    for index, run in enumerate(ok):
+        problems.extend(f"run {index + 1}: {p}" for p in check_run(workload, params, run))
     if not ok:
-        return {"status": runs[-1]["status"], "error": runs[-1].get("error", ""), "runs": len(runs)}
-    metrics = {}
+        return {"status": runs[-1]["status"], "error": runs[-1].get("error", ""), "runs": len(runs)}, problems
+    metrics, spread = {}, {}
     for key in ok[0]["metrics"]:
         values = [r["metrics"].get(key) for r in ok if isinstance(r["metrics"].get(key), (int, float))]
         if values:
             metrics[key] = statistics.median(values)
-    return {
+            spread[key] = [min(values), max(values)]
+    summary = {
         "status": "ok" if len(ok) == len(runs) else "partial",
         "runs": len(ok),
         "library_version": ok[0].get("library_version", ""),
         "metrics": metrics,
+        "spread": spread,
         "samples": [r["metrics"] for r in ok],
         "work": ok[0].get("work", {}),
+        "max_load": max(r.get("load", 0.0) for r in runs),
     }
-
-
-def check_work(workload, params, summary):
-    problems = []
-    for key, value in expected_work(workload, params).items():
-        got = summary.get("work", {}).get(key)
-        if got != value:
-            problems.append(f"work.{key} is {got}, expected {value}")
-    return problems
+    if summary["status"] == "partial":
+        failed = next(r for r in runs if r["status"] != "ok")
+        summary["error"] = failed.get("error", "")
+    return summary, problems
 
 
 def target_name(target):
     return target["library"] if target["variant"] == "default" else f"{target['library']} ({target['variant']})"
 
 
-def write_markdown(path, info, results, targets):
+def cell(entry, metric):
+    summary = entry["summary"]
+    if entry["problems"]:
+        return "work mismatch"
+    if summary["status"] in ("ok", "partial"):
+        value = format_value(summary["metrics"].get(metric, float("nan")))
+        return value + (" (partial)" if summary["status"] == "partial" else "")
+    return summary["status"]
+
+
+def write_markdown(path, info, results, targets, repeat):
     lines = ["# Results", ""]
     lines.append(f"{info['date']} on `{info['host']}`: {info['cpu']}, {info['cpus']} CPUs, {info['memory']}, "
-                 f"Linux {info['kernel']}.")
-    lines.append(f"Compilers: {info['cxx']}; {info['rustc']}.")
+                 f"Linux {info['kernel']}, governor {info['governor']}.")
+    lines.append(f"C++: {info['cxx']}, {info['cxx_build']}. Rust: {info['rustc']}.")
+    lines.append(f"UDP buffer limits: rmem_max {info['rmem_max']}, wmem_max {info['wmem_max']}. "
+                 f"io_uring_disabled {info['io_uring_disabled']}.")
     versions = {}
     for entry in results:
         if entry["summary"].get("library_version"):
             versions[target_name(entry["target"])] = entry["summary"]["library_version"]
     if versions:
         lines.append("Versions: " + ", ".join(f"{k} {v}" for k, v in sorted(versions.items())) + ".")
+    loads = [e["summary"].get("max_load") for e in results if e["summary"].get("max_load") is not None]
+    if loads:
+        lines.append(f"Load average during runs: {min(loads):.1f} to {max(loads):.1f}.")
     lines.append("")
-    lines.append("Each number is the median of the runs. See `METHOD.md` for what each workload does.")
+    lines.append(f"Each number is the median of {repeat} run{'s' if repeat != 1 else ''}; the Detail tables give the "
+                 "range. `METHOD.md` says what each workload does, and each library's `NOTES.md` the choices its "
+                 "implementation made.")
     lines.append("")
 
     names = []
@@ -187,8 +257,7 @@ def write_markdown(path, info, results, targets):
 
     lines.append("## Summary")
     lines.append("")
-    header = "| workload | params | metric | " + " | ".join(names) + " |"
-    lines.append(header)
+    lines.append("| workload | params | metric | " + " | ".join(names) + " |")
     lines.append("|" + "---|" * (3 + len(names)))
     by_key = {}
     for entry in results:
@@ -201,14 +270,7 @@ def write_markdown(path, info, results, targets):
             row = f"| {workload} | {shown} | {metric}{' (lower is better)' if metric in LOWER_IS_BETTER else ''} |"
             for name in names:
                 entry = cells.get(name)
-                if entry is None:
-                    row += " |"
-                elif entry["summary"]["status"] in ("ok", "partial") and not entry["problems"]:
-                    row += f" {format_value(entry['summary']['metrics'].get(metric, float('nan')))} |"
-                elif entry["problems"]:
-                    row += " work mismatch |"
-                else:
-                    row += f" {entry['summary']['status']} |"
+                row += " |" if entry is None else f" {cell(entry, metric)} |"
             lines.append(row)
     lines.append("")
 
@@ -223,18 +285,26 @@ def write_markdown(path, info, results, targets):
             for key in entry["summary"].get("metrics", {}):
                 if key not in metric_names:
                     metric_names.append(key)
-        lines.append("| " + " | ".join(["library", "status"] + metric_names) + " |")
-        lines.append("|" + "---|" * (2 + len(metric_names)))
+        lines.append("| " + " | ".join(["library", "status", "load"] + metric_names) + " |")
+        lines.append("|" + "---|" * (3 + len(metric_names)))
         for name in names:
             entry = cells.get(name)
             if entry is None:
                 continue
             summary = entry["summary"]
             status = summary["status"] if not entry["problems"] else "work mismatch: " + "; ".join(entry["problems"])
-            if summary["status"] in ("unsupported", "failed", "missing"):
-                status += ": " + summary.get("error", "").replace("\n", " ").replace("|", "/")[:160]
-            values = [format_value(summary.get("metrics", {}).get(m, "")) for m in metric_names]
-            lines.append("| " + " | ".join([name, status] + values) + " |")
+            if summary.get("error"):
+                status += ": " + summary["error"].replace("\n", " ").replace("|", "/")[:160]
+            values = []
+            for metric in metric_names:
+                value = summary.get("metrics", {}).get(metric)
+                if value is None:
+                    values.append("")
+                    continue
+                low, high = summary.get("spread", {}).get(metric, [value, value])
+                values.append(format_value(value) if low == high else f"{format_value(value)} [{format_value(low)}–{format_value(high)}]")
+            load = summary.get("max_load")
+            lines.append("| " + " | ".join([name, status, "" if load is None else f"{load:.1f}"] + values) + " |")
     lines.append("")
     with open(path, "w") as f:
         f.write("\n".join(lines))
@@ -266,7 +336,7 @@ def main():
         binary = target["binary"].replace("{cpp}", args.cpp_build).replace("{rust}", args.rust_target)
         targets.append(dict(target, binary=binary))
 
-    info = machine_info()
+    info = machine_info(args.cpp_build)
     workdir = tempfile.mkdtemp(prefix="vio-bench-", dir=os.environ.get("BENCH_WORKDIR"))
     results = []
     failures = 0
@@ -297,9 +367,8 @@ def main():
                         runs.append(run)
                         if run["status"] != "ok":
                             break
-                    summary = aggregate(runs)
-                    problems = check_work(workload, params, summary) if summary["status"] in ("ok", "partial") else []
-                    if summary["status"] == "failed" or problems:
+                    summary, problems = aggregate(workload, params, runs)
+                    if summary["status"] in ("failed", "partial") or problems:
                         failures += 1
                     primary = ", ".join(
                         f"{m}={format_value(summary['metrics'][m])}" for m in PRIMARY.get(workload, [])
@@ -317,7 +386,7 @@ def main():
                          + ("-quick" if args.quick else ""))
     with open(os.path.join(args.out, name + ".json"), "w") as f:
         json.dump({"machine": info, "repeat": repeat, "quick": args.quick, "results": results}, f, indent=1)
-    write_markdown(os.path.join(args.out, name + ".md"), info, results, targets)
+    write_markdown(os.path.join(args.out, name + ".md"), info, results, targets, repeat)
     print(f"wrote {os.path.join(args.out, name)}.md and .json; {failures} failed", file=sys.stderr)
     return 1 if failures else 0
 
