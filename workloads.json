@@ -1,0 +1,57 @@
+{
+  "targets": [
+    {"library": "vio", "variant": "epoll", "binary": "{cpp}/cpp/vio/bench_vio", "env": {"VIO_BACKEND": "epoll"}},
+    {"library": "vio", "variant": "io_uring", "binary": "{cpp}/cpp/vio/bench_vio", "env": {"VIO_BACKEND": "io_uring"}},
+    {"library": "libuv", "variant": "default", "binary": "{cpp}/cpp/libuv/bench_libuv"},
+    {"library": "asio", "variant": "default", "binary": "{cpp}/cpp/asio/bench_asio"},
+    {"library": "tokio", "variant": "rustls", "binary": "{rust}/release/bench_tokio", "env": {"BENCH_TLS": "rustls"}},
+    {"library": "tokio", "variant": "openssl", "binary": "{rust}/release/bench_tokio", "env": {"BENCH_TLS": "openssl"},
+     "only": ["tls_bulk", "tls_handshake"]}
+  ],
+  "workloads": {
+    "tcp_rr": [
+      {"connections": 1, "size": 64, "depth": 1, "seconds": 5},
+      {"connections": 64, "size": 64, "depth": 1, "seconds": 5},
+      {"connections": 1, "size": 64, "depth": 16, "seconds": 5},
+      {"connections": 16, "size": 16384, "depth": 1, "seconds": 5}
+    ],
+    "tcp_bulk": [
+      {"bytes": 2147483648, "chunk": 65536}
+    ],
+    "tls_bulk": [
+      {"bytes": 1073741824, "chunk": 65536}
+    ],
+    "tls_handshake": [
+      {"seconds": 5}
+    ],
+    "udp_flood": [
+      {"size": 1200, "seconds": 5, "batch": 0},
+      {"size": 1200, "seconds": 5, "batch": 32}
+    ],
+    "file_seq": [
+      {"bytes": 536870912, "block": 65536}
+    ],
+    "file_rand": [
+      {"file_bytes": 268435456, "block": 4096, "depth": 1, "seconds": 5},
+      {"file_bytes": 268435456, "block": 4096, "depth": 32, "seconds": 5}
+    ],
+    "timer_accuracy": [
+      {"count": 2000, "interval_us": 1000}
+    ],
+    "timer_churn": [
+      {"count": 100000}
+    ],
+    "wake_pingpong": [
+      {"count": 200000}
+    ],
+    "wake_flood": [
+      {"count": 2000000}
+    ]
+  },
+  "quick": {
+    "seconds": 0.25,
+    "bytes": 16777216,
+    "file_bytes": 16777216,
+    "count_divisor": 100
+  }
+}
