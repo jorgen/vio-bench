@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <cstdlib>
 #include <expected>
 #include <format>
 #include <functional>
@@ -25,7 +26,7 @@
 namespace vio_bench
 {
 inline constexpr std::string_view library = "vio";
-inline constexpr std::string_view version = "074a30a";
+inline constexpr std::string_view version = VIO_BENCH_VERSION;
 inline constexpr int listen_backlog = 1024;
 inline constexpr double mib = 1024.0 * 1024.0;
 
@@ -112,10 +113,19 @@ inline vio::task_t<void> stop_after(vio::event_loop_t &loop, vio::task_t<void> b
   loop.stop();
 }
 
+inline std::string requested_backend(const vio::event_loop_t &loop)
+{
+  std::string backend = loop.backend_name();
+  const char *requested = std::getenv("VIO_BACKEND");
+  if (requested != nullptr && *requested != '\0' && backend != requested)
+    bench::unsupported(std::format("VIO_BACKEND={} requested but the loop runs on {}", requested, backend));
+  return backend;
+}
+
 inline std::string run_loop(const std::function<vio::task_t<void>(vio::event_loop_t &)> &start)
 {
   vio::event_loop_t loop;
-  std::string backend = loop.backend_name();
+  std::string backend = requested_backend(loop);
   std::optional<vio::task_t<void>> task;
   loop.run_in_loop([&] { task.emplace(stop_after(loop, start(loop))); });
   loop.run();

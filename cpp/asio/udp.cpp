@@ -93,7 +93,7 @@ asio::awaitable<void> receive(udp::socket &socket, receiver_state_t &state)
   }
 }
 
-asio::awaitable<void> stop_when_quiet(udp::socket &socket, receiver_state_t &state)
+asio::awaitable<void> stop_when_quiet(udp::socket &socket, receiver_state_t &state, std::int64_t give_up_ns)
 {
   asio::steady_timer timer(co_await asio::this_coro::executor);
   std::int64_t last_count = 0;
@@ -109,21 +109,25 @@ asio::awaitable<void> stop_when_quiet(udp::socket &socket, receiver_state_t &sta
       last_change_ns = now;
       continue;
     }
-    if (last_count > 0 && now - last_change_ns >= bench::udp_quiet_ns)
+    bool heard = last_count > 0;
+    if (heard && now - last_change_ns >= bench::udp_quiet_ns)
+      break;
+    if (!heard && now >= give_up_ns)
       break;
   }
   state.stopping = true;
   socket.close();
 }
 
-void run_receiver(receiver_state_t &state, std::promise<unsigned short> &port)
+void run_receiver(receiver_state_t &state, double seconds, std::promise<unsigned short> &port)
 {
   asio::io_context context(1);
   udp::socket socket(context, udp::endpoint(asio::ip::address_v4::loopback(), 0));
   set_buffers(socket);
+  auto give_up_ns = bench::now_ns() + bench::seconds_ns(seconds) + bench::udp_quiet_ns;
   port.set_value(socket.local_endpoint().port());
   spawn(context.get_executor(), receive(socket, state), "udp receiver");
-  spawn(context.get_executor(), stop_when_quiet(socket, state), "udp quiet watch");
+  spawn(context.get_executor(), stop_when_quiet(socket, state, give_up_ns), "udp quiet watch");
   context.run();
 }
 
@@ -172,7 +176,7 @@ bench::result_t udp_flood(const bench::args_t &args)
   receiver.size = size;
   std::promise<unsigned short> port;
   auto port_ready = port.get_future();
-  std::thread receiver_thread([&] { run_receiver(receiver, port); });
+  std::thread receiver_thread([&] { run_receiver(receiver, seconds, port); });
 
   asio::io_context context(1);
   sender_t sender(context, seconds);

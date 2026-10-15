@@ -18,7 +18,7 @@ struct loop_thread_t
   {
     thread = std::thread([this] {
       vio::event_loop_t loop;
-      backend = loop.backend_name();
+      backend = requested_backend(loop);
       ready.set_value(&loop);
       loop.run();
     });

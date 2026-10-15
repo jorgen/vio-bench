@@ -7,6 +7,8 @@ namespace uvb
 namespace
 {
 constexpr std::uint64_t cancelled_timeout_ms = 60'000;
+constexpr std::int64_t churn_stride = 7919;
+constexpr std::int64_t churn_spread_ms = 100;
 
 struct sleeper_t
 {
@@ -44,7 +46,15 @@ void woke(uv_timer_t *timer)
 
 std::uint64_t churn_due_ms(std::int64_t index)
 {
-  return std::uint64_t((index * 7919) % 100);
+  return std::uint64_t((index * churn_stride) % churn_spread_ms);
+}
+
+std::uint64_t churn_latest_due_ms(std::int64_t count)
+{
+  std::uint64_t latest = 0;
+  for (std::int64_t i = 0; i < std::min(count, churn_spread_ms); ++i)
+    latest = std::max(latest, churn_due_ms(i));
+  return latest;
 }
 
 struct churn_t
@@ -53,7 +63,6 @@ struct churn_t
   std::int64_t count = 0;
   std::int64_t fired = 0;
   std::int64_t last_fired_ns = 0;
-  std::uint64_t last_due_ms = 0;
   double last_fired_cpu = 0.0;
 };
 
@@ -64,7 +73,6 @@ void churn_fired(uv_timer_t *timer)
     return;
   churn.last_fired_ns = bench::now_ns();
   churn.last_fired_cpu = bench::process_cpu_s();
-  churn.last_due_ms = churn_due_ms(timer - churn.timers.get());
 }
 
 void never_fires(uv_timer_t *)
@@ -109,15 +117,19 @@ bench::result_t timer_churn(const bench::args_t &args)
   churn.timers = std::make_unique<uv_timer_t[]>(std::size_t(count));
   auto cancelling = std::make_unique<uv_timer_t[]>(std::size_t(count));
 
-  uv_update_time(loop.get());
-  auto fire_start_ns = bench::now_ns();
+  auto latest_due_ms = churn_latest_due_ms(count);
+  std::int64_t latest_due_ns = 0;
   auto fire_start_cpu = bench::process_cpu_s();
   for (std::int64_t i = 0; i < count; ++i)
   {
     auto *timer = &churn.timers[std::size_t(i)];
     check_uv(uv_timer_init(loop.get(), timer), "uv_timer_init");
     timer->data = &churn;
-    check_uv(uv_timer_start(timer, churn_fired, churn_due_ms(i), 0), "uv_timer_start");
+    auto due_ms = churn_due_ms(i);
+    uv_update_time(loop.get());
+    if (due_ms == latest_due_ms)
+      latest_due_ns = bench::now_ns() + std::int64_t(due_ms) * 1'000'000;
+    check_uv(uv_timer_start(timer, churn_fired, due_ms, 0), "uv_timer_start");
   }
   loop.run();
   bench::check(churn.fired == count, "not every timer fired");
@@ -146,10 +158,9 @@ bench::result_t timer_churn(const bench::args_t &args)
   }
   loop.run_and_close();
 
-  auto last_due_ns = fire_start_ns + std::int64_t(churn.last_due_ms) * 1'000'000;
   bench::result_t result;
   result.metrics["fire_cpu_ns"] = (churn.last_fired_cpu - fire_start_cpu) * 1e9 / double(count);
-  result.metrics["last_late_ms"] = double(churn.last_fired_ns - last_due_ns) / 1e6;
+  result.metrics["last_late_ms"] = double(churn.last_fired_ns - latest_due_ns) / 1e6;
   result.metrics["arm_cancel_ns"] = double(arm_end_ns - arm_start_ns) / double(count);
   result.work["fired"] = churn.fired;
   result.work["cancelled"] = cancelled;

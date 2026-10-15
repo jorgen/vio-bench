@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <array>
 #include <future>
-#include <memory>
 #include <string>
 #include <thread>
 #include <vector>
@@ -25,6 +24,8 @@ using asio::ip::tcp;
 using tls_stream_t = asio::ssl::stream<tcp::socket>;
 
 constexpr const char *server_name = "localhost";
+constexpr std::size_t default_buffer_size = 0;
+constexpr std::size_t bulk_client_write_buffer = 128 * 1024;
 
 std::string ssl_errors()
 {
@@ -44,6 +45,11 @@ void require_ssl(bool ok, std::string_view what)
 {
   if (!ok)
     bench::fail(std::format("{}: {}", what, ssl_errors()));
+}
+
+[[nodiscard]] bool closed_by_peer(const std::error_code &error)
+{
+  return error == asio::error::eof || error == asio::ssl::error::stream_truncated;
 }
 
 asio::ssl::context make_context(bool server)
@@ -112,7 +118,7 @@ asio::awaitable<void> tls_sink(tcp::acceptor acceptor, asio::ssl::context &conte
   auto socket = co_await acceptor.async_accept(asio::deferred);
   acceptor.close();
   socket.set_option(tcp::no_delay(true));
-  tls_stream_t stream(std::move(socket), context);
+  tls_stream_t stream(std::move(socket), context, bench::server_read_buffer, default_buffer_size);
   co_await stream.async_handshake(asio::ssl::stream_base::server, asio::deferred);
   std::vector<char> buffer(bench::server_read_buffer);
   std::error_code ending;
@@ -155,7 +161,7 @@ struct tls_source_result_t
 asio::awaitable<void> tls_source(tcp::endpoint server, asio::ssl::context &context, std::int64_t bytes, std::int64_t chunk,
                                  tls_source_result_t &result)
 {
-  tls_stream_t stream(co_await asio::this_coro::executor, context);
+  tls_stream_t stream(co_await asio::this_coro::executor, context, default_buffer_size, bulk_client_write_buffer);
   prepare_client(stream);
   co_await stream.next_layer().async_connect(server, asio::deferred);
   stream.next_layer().set_option(tcp::no_delay(true));
@@ -191,12 +197,9 @@ asio::awaitable<void> handshake_peer(tcp::socket socket, asio::ssl::context &con
     auto [error, length] = co_await stream.async_read_some(asio::buffer(buffer), with_error);
     if (!error)
       continue;
-    if (error == asio::ssl::error::stream_truncated)
+    if (closed_by_peer(error))
       co_return;
-    if (error != asio::error::eof)
-      fail("tls_handshake server read", error);
-    co_await stream.async_shutdown(asio::deferred);
-    co_return;
+    fail("tls_handshake server read", error);
   }
 }
 
@@ -237,11 +240,6 @@ struct handshake_client_t
   negotiated_t negotiated;
 };
 
-asio::awaitable<void> close_tls(std::unique_ptr<tls_stream_t> stream)
-{
-  co_await stream->async_shutdown(asio::deferred);
-}
-
 asio::awaitable<void> handshake_client(tcp::endpoint server, asio::ssl::context &context, handshake_client_t &client)
 {
   auto executor = co_await asio::this_coro::executor;
@@ -249,11 +247,11 @@ asio::awaitable<void> handshake_client(tcp::endpoint server, asio::ssl::context 
   while (!client.window.ended())
   {
     auto started = bench::now_ns();
-    auto stream = std::make_unique<tls_stream_t>(executor, context);
-    prepare_client(*stream);
-    co_await stream->next_layer().async_connect(server, asio::deferred);
-    stream->next_layer().set_option(tcp::no_delay(true));
-    co_await stream->async_handshake(asio::ssl::stream_base::client, asio::deferred);
+    tls_stream_t stream(executor, context);
+    prepare_client(stream);
+    co_await stream.next_layer().async_connect(server, asio::deferred);
+    stream.next_layer().set_option(tcp::no_delay(true));
+    co_await stream.async_handshake(asio::ssl::stream_base::client, asio::deferred);
     auto finished = bench::now_ns();
     if (client.window.measuring())
     {
@@ -261,8 +259,10 @@ asio::awaitable<void> handshake_client(tcp::endpoint server, asio::ssl::context 
       client.latencies.add(finished - started);
     }
     if (client.negotiated.cipher.empty())
-      client.negotiated = negotiated(*stream);
-    spawn(executor, close_tls(std::move(stream)), "tls_handshake close");
+      client.negotiated = negotiated(stream);
+    auto [error] = co_await stream.async_shutdown(with_error);
+    if (error && !closed_by_peer(error))
+      fail("tls_handshake close", error);
   }
 }
 }

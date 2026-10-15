@@ -55,9 +55,19 @@ void echo_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *)
     return;
   }
   auto *connection = static_cast<echo_connection_t *>(stream->data);
-  uv_read_stop(stream);
   auto echo = uv_buf_init(connection->buffer.data(), unsigned(nread));
-  if (uv_write(&connection->write, stream, &echo, 1, echo_written) < 0)
+  int written = uv_try_write(stream, &echo, 1);
+  if (written == nread)
+    return;
+  if (written < 0 && written != UV_EAGAIN)
+  {
+    close_handle(stream);
+    return;
+  }
+  auto echoed = std::max(written, 0);
+  uv_read_stop(stream);
+  auto rest = uv_buf_init(connection->buffer.data() + echoed, unsigned(nread - echoed));
+  if (uv_write(&connection->write, stream, &rest, 1, echo_written) < 0)
     close_handle(stream);
 }
 

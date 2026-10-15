@@ -17,6 +17,9 @@ namespace uvb
 namespace
 {
 constexpr const char *server_name = "localhost";
+constexpr std::size_t ciphertext_in_ring = bench::server_read_buffer;
+constexpr std::size_t ciphertext_out_ring = 2 * bench::server_read_buffer;
+constexpr std::size_t plaintext_buffer = bench::server_read_buffer;
 
 std::string ssl_errors()
 {
@@ -73,12 +76,9 @@ public:
     : _ssl(SSL_new(context))
   {
     check_ssl(_ssl != nullptr, "SSL_new");
-    BIO *network_in = BIO_new(BIO_s_mem());
-    BIO *network_out = BIO_new(BIO_s_mem());
-    check_ssl(network_in != nullptr && network_out != nullptr, "BIO_new");
-    SSL_set_bio(_ssl, network_in, network_out);
-    _network_in = network_in;
-    _network_out = network_out;
+    BIO *engine_side = nullptr;
+    check_ssl(BIO_new_bio_pair(&engine_side, ciphertext_out_ring, &_network, ciphertext_in_ring) == 1, "BIO_new_bio_pair");
+    SSL_set_bio(_ssl, engine_side, engine_side);
     _tcp.data = this;
     _connect.data = this;
   }
@@ -89,6 +89,7 @@ public:
   virtual ~tls_stream_t()
   {
     SSL_free(_ssl);
+    BIO_free(_network);
   }
 
   void connect(uv_loop_t *loop, const sockaddr_in &server)
@@ -146,8 +147,13 @@ protected:
   void write_plaintext(const std::byte *data, std::size_t length)
   {
     int written = SSL_write(_ssl, data, int(length));
-    if (written <= 0)
-      fail_tls("SSL_write", written);
+    while (written <= 0)
+    {
+      if (SSL_get_error(_ssl, written) != SSL_ERROR_WANT_WRITE || BIO_ctrl_pending(_network) == 0 || closing())
+        fail_tls("SSL_write", written);
+      flush();
+      written = SSL_write(_ssl, data, int(length));
+    }
     bench::check(std::size_t(written) == length, "SSL_write wrote part of a chunk");
     flush();
   }
@@ -214,11 +220,12 @@ private:
         return;
       }
       _handshake_done = true;
+      flush();
       handshake_completed();
     }
     while (!closing())
     {
-      int n = SSL_read(_ssl, _plaintext.data(), int(_plaintext.size()));
+      int n = SSL_read(_ssl, _plaintext.get(), int(plaintext_buffer));
       if (n > 0)
       {
         plaintext_received(std::size_t(n));
@@ -239,7 +246,7 @@ private:
 
   void flush()
   {
-    std::size_t pending = BIO_ctrl_pending(_network_out);
+    std::size_t pending = BIO_ctrl_pending(_network);
     if (pending == 0 || closing())
       return;
     cipher_write_t *write = nullptr;
@@ -255,7 +262,7 @@ private:
       _idle_writes.pop_back();
     }
     write->data.resize(pending);
-    int n = BIO_read(_network_out, write->data.data(), int(pending));
+    int n = BIO_read(_network, write->data.data(), int(pending));
     check_ssl(n == int(pending), "BIO_read");
     auto buf = uv_buf_init(write->data.data(), unsigned(n));
     ++_writes_in_flight;
@@ -271,7 +278,9 @@ private:
   static void on_alloc(uv_handle_t *handle, std::size_t, uv_buf_t *buf)
   {
     auto *self = static_cast<tls_stream_t *>(handle->data);
-    *buf = uv_buf_init(self->_ciphertext.data(), unsigned(self->_ciphertext.size()));
+    char *room = nullptr;
+    int length = BIO_nwrite0(self->_network, &room);
+    *buf = length > 0 ? uv_buf_init(room, unsigned(length)) : uv_buf_init(nullptr, 0);
   }
 
   static void on_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf)
@@ -287,7 +296,8 @@ private:
       self->peer_closed();
       return;
     }
-    check_ssl(BIO_write(self->_network_in, buf->base, int(nread)) == int(nread), "BIO_write");
+    char *committed = nullptr;
+    check_ssl(BIO_nwrite(self->_network, &committed, int(nread)) == int(nread) && committed == buf->base, "BIO_nwrite");
     self->drive();
   }
 
@@ -318,14 +328,12 @@ private:
   }
 
   SSL *_ssl;
-  BIO *_network_in = nullptr;
-  BIO *_network_out = nullptr;
+  BIO *_network = nullptr;
   uv_tcp_t _tcp{};
   uv_connect_t _connect{};
   uv_shutdown_t _shutdown{};
   bool _handshake_done = false;
-  std::vector<char> _ciphertext = std::vector<char>(bench::server_read_buffer);
-  std::vector<char> _plaintext = std::vector<char>(bench::server_read_buffer);
+  std::unique_ptr<char[]> _plaintext = std::make_unique_for_overwrite<char[]>(plaintext_buffer);
   std::vector<std::unique_ptr<cipher_write_t>> _writes;
   std::vector<cipher_write_t *> _idle_writes;
   std::size_t _writes_in_flight = 0;

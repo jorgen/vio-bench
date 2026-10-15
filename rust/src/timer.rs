@@ -1,10 +1,14 @@
-use crate::bench::{self, Args, Latencies, Report, check, fail};
+use crate::bench::{self, Args, Latencies, Report, check};
 use crate::support::{non_negative, positive, runtime};
+use std::future::{Future, poll_fn};
+use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicI64, AtomicU64, Ordering};
+use std::task::Poll;
 use std::time::Duration;
 use tokio::sync::Notify;
-use tokio::time::{Instant, sleep};
+use tokio::task::coop::unconstrained;
+use tokio::time::{Instant, Sleep, sleep};
 
 const CHURN_SPREAD_MS: i64 = 100;
 const CHURN_STRIDE: i64 = 7919;
@@ -76,19 +80,6 @@ impl Firing {
     }
 }
 
-struct Arming {
-    unarmed: AtomicI64,
-    all_armed: Notify,
-}
-
-impl Arming {
-    fn armed_one(&self) {
-        if self.unarmed.fetch_sub(1, Ordering::Relaxed) == 1 {
-            self.all_armed.notify_one();
-        }
-    }
-}
-
 struct Churn {
     fire_cpu_s: f64,
     last_late_ns: i64,
@@ -125,31 +116,27 @@ async fn churn(count: i64) -> Churn {
     let last_deadline_ns = fire_start_ns + firing.last_deadline_after_arming_ns.load(Ordering::Relaxed);
     let last_late_ns = firing.last_fired_ns.load(Ordering::Relaxed) - last_deadline_ns;
 
-    let arming = Arc::new(Arming { unarmed: AtomicI64::new(count), all_armed: Notify::new() });
-    let arm_start_ns = bench::now_ns();
-    let timers: Vec<_> = (0..count)
-        .map(|_| {
-            let arming = Arc::clone(&arming);
-            tokio::spawn(async move {
-                arming.armed_one();
-                sleep(CANCELLED_TIMEOUT).await;
-                fail("a cancelled timer fired");
-            })
-        })
-        .collect();
-    arming.all_armed.notified().await;
-    for timer in &timers {
-        timer.abort();
-    }
-    let mut cancelled = 0i64;
-    for timer in timers {
-        if timer.await.is_err_and(|error| error.is_cancelled()) {
-            cancelled += 1;
-        }
-    }
-    let arm_cancel_ns = bench::now_ns() - arm_start_ns;
+    let (arm_cancel_ns, cancelled) = arm_then_cancel(count).await;
 
     Churn { fire_cpu_s, last_late_ns, arm_cancel_ns, fired, cancelled }
+}
+
+async fn arm_then_cancel(count: i64) -> (i64, i64) {
+    let mut timers: Vec<Pin<Box<Sleep>>> = Vec::with_capacity(count as usize);
+    let arm_start_ns = bench::now_ns();
+    unconstrained(poll_fn(|cx| {
+        for _ in 0..count {
+            let mut timer = Box::pin(sleep(CANCELLED_TIMEOUT));
+            check(timer.as_mut().poll(cx).is_pending(), "a 60 s timer fired at once");
+            timers.push(timer);
+        }
+        Poll::Ready(())
+    }))
+    .await;
+    let cancelled = timers.iter().filter(|timer| !timer.is_elapsed()).count() as i64;
+    drop(timers);
+    let arm_cancel_ns = bench::now_ns() - arm_start_ns;
+    (arm_cancel_ns, cancelled)
 }
 
 pub fn timer_churn(args: &Args) -> Report {

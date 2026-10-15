@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <format>
 #include <functional>
 #include <string_view>
@@ -112,12 +113,25 @@ inline void connect_to(uv_loop_t *loop, uv_tcp_t *tcp, uv_connect_t *request, co
   check_uv(uv_tcp_connect(request, tcp, reinterpret_cast<const sockaddr *>(&server), on_connected), "uv_tcp_connect");
 }
 
+[[nodiscard]] inline bool io_uring_variant()
+{
+  const char *variant = std::getenv("BENCH_VARIANT");
+  if (variant == nullptr || std::string_view(variant) != "io_uring")
+    return false;
+  const char *enabled = std::getenv("UV_USE_IO_URING");
+  if (enabled == nullptr || std::atoi(enabled) <= 0)
+    bench::fail("the io_uring variant needs UV_USE_IO_URING=1, or libuv 1.53 quietly keeps file I/O on its threadpool");
+  return true;
+}
+
 class loop_t
 {
 public:
   loop_t()
   {
     check_uv(uv_loop_init(&_loop), "uv_loop_init");
+    if (io_uring_variant())
+      check_uv(uv_loop_configure(&_loop, UV_LOOP_USE_IO_URING_SQPOLL), "uv_loop_configure");
   }
 
   loop_t(const loop_t &) = delete;

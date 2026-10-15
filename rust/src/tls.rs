@@ -145,6 +145,7 @@ fn openssl_context(side: Side) -> SslContext {
     builder.set_ciphersuites("TLS_AES_128_GCM_SHA256").or_fail("SSL_CTX_set_ciphersuites");
     builder.set_groups_list("X25519").or_fail("SSL_CTX_set1_groups_list");
     builder.set_session_cache_mode(SslSessionCacheMode::OFF);
+    builder.set_read_ahead(true);
     match side {
         Side::Server => {
             builder.set_certificate_chain_file(bench::server_cert_path()).or_fail("server certificate");
@@ -222,13 +223,28 @@ enum Backend {
     OpenSsl,
 }
 
+const BACKEND_NAMES: [&str; 2] = ["rustls", "openssl"];
+
 fn backend() -> Backend {
-    match std::env::var_os("BENCH_TLS") {
-        None => Backend::Rustls,
-        Some(name) if name == "rustls" => Backend::Rustls,
-        Some(name) if name == "openssl" => Backend::OpenSsl,
-        Some(name) => fail(&format!("BENCH_TLS must be rustls or openssl, not '{}'", name.to_string_lossy())),
+    let Some(chosen) = std::env::var_os("BENCH_TLS") else {
+        fail("BENCH_TLS is not set: it must name the TLS library, rustls or openssl");
+    };
+    let backend = match chosen.to_str() {
+        Some("rustls") => Backend::Rustls,
+        Some("openssl") => Backend::OpenSsl,
+        _ => fail(&format!("BENCH_TLS must be rustls or openssl, not '{}'", chosen.to_string_lossy())),
+    };
+    if let Some(variant) = std::env::var_os("BENCH_VARIANT")
+        && BACKEND_NAMES.iter().any(|name| variant == *name)
+        && variant != chosen
+    {
+        fail(&format!(
+            "BENCH_VARIANT '{}' names a different TLS library than BENCH_TLS '{}'",
+            variant.to_string_lossy(),
+            chosen.to_string_lossy()
+        ));
     }
+    backend
 }
 
 struct SinkOutcome {

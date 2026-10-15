@@ -1,5 +1,6 @@
 #include "support.h"
 
+#include <vio/buffer_pool.h>
 #include <vio/operation/udp.h>
 #include <vio/operation/udp_datagram.h>
 
@@ -85,34 +86,43 @@ udp_endpoint_t open_socket(vio::event_loop_t &loop, vio::udp_recvmmsg_t recvmmsg
   return {std::move(*socket), port_of(*name)};
 }
 
-template <typename Reader>
-vio::task_t<void> stop_when_quiet(vio::event_loop_t &loop, Reader &reader, const received_t &received, std::int64_t give_up_at)
+struct listening_t
 {
-  std::int64_t last_total = -1;
-  std::int64_t last_change = bench::now_ns();
+  std::int64_t sending_ns = 0;
+  std::int64_t give_up_at = 0;
+};
+
+template <typename Reader>
+vio::task_t<void> stop_when_quiet(vio::event_loop_t &loop, Reader &reader, const received_t &received, listening_t listening)
+{
+  std::int64_t last_total = 0;
+  std::int64_t last_change = 0;
+  std::int64_t sender_done_by = 0;
   for (;;)
   {
     require(co_await vio::sleep(loop, std::chrono::nanoseconds(quiet_poll_ns)), "sleep");
     const auto now = bench::now_ns();
     if (received.total != last_total)
     {
+      if (last_total == 0)
+        sender_done_by = now + listening.sending_ns;
       last_total = received.total;
       last_change = now;
       continue;
     }
-    if (received.total > 0 && now - last_change >= bench::udp_quiet_ns)
+    if (received.total > 0 && now >= sender_done_by && now - last_change >= bench::udp_quiet_ns)
       break;
-    if (received.total == 0 && now >= give_up_at)
+    if (received.total == 0 && now >= listening.give_up_at)
       break;
   }
   reader.cancel();
 }
 
-vio::task_t<void> receive_each(vio::event_loop_t &loop, vio::udp_t socket, received_t &received, std::int64_t give_up_at)
+vio::task_t<void> receive_each(vio::event_loop_t &loop, vio::udp_t socket, received_t &received, listening_t listening)
 {
   auto reader = vio::udp_create_reader(socket);
   require(reader, "udp_create_reader");
-  auto watchdog = stop_when_quiet(loop, *reader, received, give_up_at);
+  auto watchdog = stop_when_quiet(loop, *reader, received, listening);
   for (;;)
   {
     auto datagram = co_await *reader;
@@ -127,12 +137,12 @@ vio::task_t<void> receive_each(vio::event_loop_t &loop, vio::udp_t socket, recei
   co_await std::move(watchdog);
 }
 
-vio::task_t<void> receive_batches(vio::event_loop_t &loop, vio::udp_t socket, std::size_t size, received_t &received, std::int64_t give_up_at)
+vio::task_t<void> receive_batches(vio::event_loop_t &loop, vio::udp_t socket, std::size_t size, received_t &received, listening_t listening)
 {
   auto reader = vio::datagram_reader_t::create(loop, socket);
   require(reader, "datagram_reader_t::create");
   require(reader->receive_datagram_size(std::max<std::size_t>(size, 2048)), "receive_datagram_size");
-  auto watchdog = stop_when_quiet(loop, *reader, received, give_up_at);
+  auto watchdog = stop_when_quiet(loop, *reader, received, listening);
   for (;;)
   {
     auto batch = co_await reader->receive();
@@ -252,13 +262,16 @@ bench::result_t udp_flood(const bench::args_t &args)
   auto port_future = port_promise.get_future();
   received_t received;
   std::thread receiver_thread([&] {
+    vio::buffer_pool_t receive_pool(std::max<std::size_t>(size, vio::default_pool_block_size));
     run_loop([&](vio::event_loop_t &loop) {
       auto endpoint = open_socket(loop, vio::udp_recvmmsg_t::off);
-      port_promise.set_value(endpoint.port);
-      const auto give_up_at = bench::now_ns() + bench::seconds_ns(seconds) + give_up_ns;
       if (batch == 0)
-        return receive_each(loop, std::move(endpoint.socket), received, give_up_at);
-      return receive_batches(loop, std::move(endpoint.socket), size, received, give_up_at);
+        require(vio::udp_use_buffer_pool(endpoint.socket, receive_pool), "udp_use_buffer_pool");
+      port_promise.set_value(endpoint.port);
+      const listening_t listening{bench::seconds_ns(seconds), bench::now_ns() + bench::seconds_ns(seconds) + give_up_ns};
+      if (batch == 0)
+        return receive_each(loop, std::move(endpoint.socket), received, listening);
+      return receive_batches(loop, std::move(endpoint.socket), size, received, listening);
     });
   });
 

@@ -45,8 +45,10 @@ inline constexpr auto with_error = asio::as_tuple(asio::deferred);
 
 [[nodiscard]] inline std::string file_backend()
 {
-#if defined(ASIO_HAS_IO_URING)
+#if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
   return "io_uring";
+#elif defined(ASIO_HAS_IO_URING)
+  return "io_uring via epoll";
 #else
   return "none";
 #endif

@@ -34,6 +34,10 @@ pub fn runtime() -> Runtime {
     Builder::new_current_thread().enable_all().build().or_fail("tokio runtime")
 }
 
+pub fn runtime_with_blocking_threads(threads: usize) -> Runtime {
+    Builder::new_current_thread().enable_all().max_blocking_threads(threads).build().or_fail("tokio runtime")
+}
+
 pub fn spawn_side<T: Send + 'static>(name: &str, side: impl FnOnce() -> T + Send + 'static) -> thread::JoinHandle<T> {
     thread::Builder::new().name(name.to_string()).spawn(side).or_fail("spawn a thread")
 }

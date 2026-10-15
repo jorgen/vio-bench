@@ -5,7 +5,7 @@ use crate::support::{
 use socket2::{Domain, Protocol, Socket, Type};
 use std::sync::mpsc::{SyncSender, sync_channel};
 use tokio::net::UdpSocket;
-use tokio::time::timeout;
+use tokio::time::{Instant, sleep};
 
 const RECEIVE_BUFFER: usize = 64 * 1024;
 const LARGEST_DATAGRAM: i64 = 65507;
@@ -68,11 +68,13 @@ async fn receive(size: usize, port: SyncSender<u16>) -> Received {
     let mut buffer = vec![0u8; RECEIVE_BUFFER];
     let mut received = Received { seen: SequenceSet::default(), duplicates: 0 };
     let mut heard = false;
+    let mut quiet_since_last = std::pin::pin!(sleep(quiet));
     loop {
         let datagram = if heard {
-            match timeout(quiet, socket.recv_from(&mut buffer)).await {
-                Ok(datagram) => datagram,
-                Err(_) => return received,
+            tokio::select! {
+                biased;
+                datagram = socket.recv_from(&mut buffer) => datagram,
+                () = &mut quiet_since_last => return received,
             }
         } else {
             socket.recv_from(&mut buffer).await
@@ -84,6 +86,7 @@ async fn receive(size: usize, port: SyncSender<u16>) -> Received {
             received.duplicates += 1;
         }
         heard = true;
+        quiet_since_last.as_mut().reset(Instant::now() + quiet);
     }
 }
 

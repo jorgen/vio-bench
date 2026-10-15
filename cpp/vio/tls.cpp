@@ -1,9 +1,11 @@
 #include <vio/ssl_backend.h>
 
+#include <openssl/crypto.h>
 #include <openssl/ssl.h>
 
 #include "support.h"
 
+#include <vio/buffer_pool.h>
 #include <vio/cancellation.h>
 #include <vio/operation/tcp.h>
 #include <vio/operation/tcp_server.h>
@@ -60,6 +62,18 @@ vio::ssl_config_t client_config()
   return config;
 }
 
+void disable_server_resumption(SSL_CTX *ctx)
+{
+  SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_OFF);
+  bench::check(SSL_CTX_set_num_tickets(ctx, 0) == 1, "SSL_CTX_set_num_tickets");
+  SSL_CTX_set_options(ctx, SSL_OP_NO_TICKET);
+}
+
+void disable_client_session_cache(SSL_CTX *ctx)
+{
+  SSL_CTX_set_session_cache_mode(ctx, SSL_SESS_CACHE_OFF);
+}
+
 struct negotiated_t
 {
   std::string cipher = "unknown";
@@ -79,6 +93,11 @@ negotiated_t negotiated(const vio::ssl_client_t &client)
   return out;
 }
 
+std::string tls_library()
+{
+  return std::format("{} {}", OpenSSL_version(OPENSSL_VERSION), VIO_BENCH_TLS_VERSION);
+}
+
 bool end_of_stream(const vio::error_t &error)
 {
   return error.code == vio::vio_tls_clean_shutdown || error.code == vio::vio_tls_truncated || error.code == vio::errc::eof;
@@ -90,7 +109,7 @@ struct tls_listener_t
   std::uint16_t port = 0;
 };
 
-tls_listener_t listen_loopback(vio::event_loop_t &loop)
+tls_listener_t listen_loopback(vio::event_loop_t &loop, vio::buffer_pool_t &read_pool)
 {
   auto tcp_server = vio::tcp_create_server(loop);
   require(tcp_server, "tcp_create_server");
@@ -99,8 +118,10 @@ tls_listener_t listen_loopback(vio::event_loop_t &loop)
   auto name = vio::sockname(tcp_server->tcp);
   require(name, "sockname");
   const auto port = port_of(*name);
-  auto server = vio::ssl_server_create(loop, std::move(*tcp_server), std::string(server_name), server_config());
+  auto server = vio::ssl_server_create(loop, std::move(*tcp_server), std::string(server_name), server_config(), &vio::buffer_pool_t::alloc_cb,
+                                       &vio::buffer_pool_t::dealloc_cb, &read_pool);
   require(server, "ssl_server_create");
+  disable_server_resumption(server->handle->ssl_ctx.ctx);
   return {std::move(*server), port};
 }
 
@@ -112,11 +133,23 @@ vio::ssl_server_client_t accepted_client(vio::ssl_server_t &server)
   return std::move(*client);
 }
 
+vio::ssl_client_t create_client(vio::event_loop_t &loop, const vio::ssl_config_t &config)
+{
+  auto client = vio::ssl_client_create(loop, config);
+  require(client, "ssl_client_create");
+  disable_client_session_cache(client->state->ssl_ctx.ctx);
+  return std::move(*client);
+}
+
 vio::ssl_client_connecting_future_t connect_client(vio::ssl_client_t &client, std::uint16_t port)
 {
   auto connecting = vio::ssl_client_connect(client, std::string(server_name), port, std::string(server_ip));
-  if (auto &tcp = client.state->tcp; tcp.handle && tcp.handle->socket.native() != vio::invalid_native_socket)
-    set_nodelay(tcp.handle->socket.native());
+  const bool already_failed = !client.state->connecting && !client.state->connected;
+  if (already_failed)
+    return connecting;
+  auto &tcp = client.state->tcp;
+  bench::check(tcp.handle && tcp.handle->socket.native() != vio::invalid_native_socket, "TLS client socket not open after ssl_client_connect; cannot set TCP_NODELAY");
+  set_nodelay(tcp.handle->socket.native());
   return connecting;
 }
 
@@ -160,10 +193,9 @@ vio::task_t<void> bulk_server(vio::ssl_server_t server, std::function<void()> li
 
 vio::task_t<void> bulk_client(vio::event_loop_t &loop, std::uint16_t port, std::int64_t bytes, std::int64_t chunk, bulk_client_result_t &result)
 {
-  auto client = vio::ssl_client_create(loop, client_config());
-  require(client, "ssl_client_create");
-  require(co_await connect_client(*client, port), "ssl_client_connect");
-  result.negotiated = negotiated(*client);
+  auto client = create_client(loop, client_config());
+  require(co_await connect_client(client, port), "ssl_client_connect");
+  result.negotiated = negotiated(client);
   const auto payload = bench::payload(std::size_t(chunk));
 
   result.cpu_at_first_write = bench::process_cpu_s();
@@ -171,10 +203,10 @@ vio::task_t<void> bulk_client(vio::event_loop_t &loop, std::uint16_t port, std::
   for (std::int64_t sent = 0; sent < bytes;)
   {
     const auto length = std::min(chunk, bytes - sent);
-    require(co_await vio::ssl_client_write(*client, std::span<const std::byte>(payload.data(), std::size_t(length))), "ssl_client_write");
+    require(co_await vio::ssl_client_write(client, std::span<const std::byte>(payload.data(), std::size_t(length))), "ssl_client_write");
     sent += length;
   }
-  require(co_await vio::ssl_client_shutdown(*client), "ssl_client_shutdown");
+  require(co_await vio::ssl_client_shutdown(client), "ssl_client_shutdown");
 }
 
 struct handshake_server_result_t
@@ -232,22 +264,22 @@ vio::task_t<void> handshake_client(vio::event_loop_t &loop, std::uint16_t port, 
   const auto config = client_config();
   result.window = window_t::starting(bench::now_ns(), seconds);
   auto meter = meter_cpu(loop, result.window, result.cpu);
-  for (;;)
+  while (bench::now_ns() < result.window.end)
   {
-    const auto started = bench::now_ns();
-    if (started >= result.window.end)
-      break;
-    auto client = vio::ssl_client_create(loop, config);
-    require(client, "ssl_client_create");
-    require(co_await connect_client(*client, port), "ssl_client_connect");
-    const auto finished = bench::now_ns();
-    if (result.window.contains(finished))
     {
-      ++result.handshakes;
-      result.latencies.add(finished - started);
+      auto client = create_client(loop, config);
+      const auto started = bench::now_ns();
+      require(co_await connect_client(client, port), "ssl_client_connect");
+      const auto finished = bench::now_ns();
+      if (result.window.contains(finished))
+      {
+        ++result.handshakes;
+        result.latencies.add(finished - started);
+      }
+      if (result.negotiated.cipher == "unknown")
+        result.negotiated = negotiated(client);
     }
-    if (result.negotiated.cipher == "unknown")
-      result.negotiated = negotiated(*client);
+    require(co_await vio::sleep(loop, std::chrono::nanoseconds(0)), "sleep");
   }
   co_await std::move(meter);
 }
@@ -269,8 +301,9 @@ bench::result_t tls_bulk(const bench::args_t &args)
   auto port_future = port_promise.get_future();
   bulk_server_result_t server_result;
   std::thread server_thread([&] {
+    vio::buffer_pool_t read_pool(vio::tls_stream_t::read_chunk);
     run_loop([&](vio::event_loop_t &loop) {
-      auto listener = listen_loopback(loop);
+      auto listener = listen_loopback(loop, read_pool);
       return bulk_server(std::move(listener.server), [&port_promise, port = listener.port] { port_promise.set_value(port); }, server_result);
     });
   });
@@ -291,6 +324,7 @@ bench::result_t tls_bulk(const bench::args_t &args)
   out.work["bytes"] = server_result.received;
   out.work["cipher"] = client_result.negotiated.cipher;
   out.work["group"] = client_result.negotiated.group;
+  out.work["tls_library"] = tls_library();
   out.work["backend"] = backend;
   return out;
 }
@@ -304,8 +338,9 @@ bench::result_t tls_handshake(const bench::args_t &args)
   handshake_server_result_t server_result;
   std::thread server_thread([&] {
     vio::cancellation_t stop;
+    vio::buffer_pool_t read_pool(vio::tls_stream_t::read_chunk);
     run_loop([&](vio::event_loop_t &loop) {
-      auto listener = listen_loopback(loop);
+      auto listener = listen_loopback(loop, read_pool);
       tls_server_handle_t handle{listener.port, &loop, &stop};
       return handshake_server(std::move(listener.server), stop, [&server_promise, handle] { server_promise.set_value(handle); }, server_result);
     });
@@ -330,6 +365,7 @@ bench::result_t tls_handshake(const bench::args_t &args)
   out.work["handshakes"] = client_result.handshakes;
   out.work["cipher"] = client_result.negotiated.cipher;
   out.work["group"] = client_result.negotiated.group;
+  out.work["tls_library"] = tls_library();
   out.work["backend"] = backend;
   return out;
 }
