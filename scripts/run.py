@@ -56,8 +56,11 @@ def check_run(workload, params, run):
             problems.append(f"work.{key} is {work.get(key)}, expected {value}")
     if workload == "tcp_rr":
         requests, received = work.get("requests"), work.get("bytes")
-        if isinstance(requests, int) and isinstance(received, int) and received != requests * int(params["size"]):
-            problems.append(f"work.bytes {received} is not requests x size ({requests} x {params['size']})")
+        size = int(params["size"])
+        in_flight = 2 * int(params["connections"]) * int(params["depth"]) * size
+        if isinstance(requests, int) and isinstance(received, int) and abs(received - requests * size) > in_flight:
+            problems.append(f"work.bytes {received} is further from requests x size ({requests} x {size}) "
+                            f"than the {in_flight} bytes in flight at the window's edges")
     if workload == "udp_flood":
         sent, received = work.get("sent"), work.get("received")
         if isinstance(sent, int) and isinstance(received, int) and received > sent:
@@ -333,10 +336,11 @@ def main():
     for target in config["targets"]:
         if only and target["library"] not in only and f"{target['library']}:{target['variant']}" not in only:
             continue
-        binary = target["binary"].replace("{cpp}", args.cpp_build).replace("{rust}", args.rust_target)
+        binary = target["binary"].replace("{cpp}", os.path.abspath(args.cpp_build)).replace(
+            "{rust}", os.path.abspath(args.rust_target))
         targets.append(dict(target, binary=binary))
 
-    info = machine_info(args.cpp_build)
+    info = machine_info(os.path.abspath(args.cpp_build))
     workdir = tempfile.mkdtemp(prefix="vio-bench-", dir=os.environ.get("BENCH_WORKDIR"))
     results = []
     failures = 0

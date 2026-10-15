@@ -8,7 +8,9 @@
 #include <asio/deferred.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/tcp.hpp>
+#include <asio/random_access_file.hpp>
 #include <asio/steady_timer.hpp>
+#include <asio/system_error.hpp>
 #include <asio/this_coro.hpp>
 #include <asio/version.hpp>
 
@@ -57,6 +59,19 @@ inline constexpr auto with_error = asio::as_tuple(asio::deferred);
 [[noreturn]] inline void fail(std::string_view what, const std::error_code &error)
 {
   bench::fail(std::format("{}: {} ({})", what, error.message(), error.value()));
+}
+
+inline void require_io_uring(std::string_view who)
+{
+  try
+  {
+    asio::io_context context(1);
+    asio::random_access_file probe(context);
+  }
+  catch (const asio::system_error &error)
+  {
+    bench::unsupported(std::format("{} needs io_uring, which this host refused: {}", who, error.what()));
+  }
 }
 
 [[nodiscard]] inline std::int64_t positive(const bench::args_t &args, std::string_view key)

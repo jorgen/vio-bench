@@ -18,6 +18,7 @@ using asio::ip::udp;
 constexpr std::size_t receive_buffer = 64 * 1024;
 constexpr std::int64_t largest_datagram = 65507;
 constexpr std::chrono::milliseconds quiet_check(10);
+constexpr std::int64_t give_up_after_ns = 10'000'000'000;
 
 class sequence_set_t
 {
@@ -124,7 +125,7 @@ void run_receiver(receiver_state_t &state, double seconds, std::promise<unsigned
   asio::io_context context(1);
   udp::socket socket(context, udp::endpoint(asio::ip::address_v4::loopback(), 0));
   set_buffers(socket);
-  auto give_up_ns = bench::now_ns() + bench::seconds_ns(seconds) + bench::udp_quiet_ns;
+  auto give_up_ns = bench::now_ns() + bench::seconds_ns(seconds) + give_up_after_ns;
   port.set_value(socket.local_endpoint().port());
   spawn(context.get_executor(), receive(socket, state), "udp receiver");
   spawn(context.get_executor(), stop_when_quiet(socket, state, give_up_ns), "udp quiet watch");
@@ -186,6 +187,7 @@ bench::result_t udp_flood(const bench::args_t &args)
   context.run();
   receiver_thread.join();
 
+  bench::check(receiver.datagrams > 0, "the receiver heard nothing in seconds + 10 s and gave up");
   auto sent = std::int64_t(sender.end_sequence - sender.first_measured);
   auto received = receiver.seen.count(sender.first_measured, sender.end_sequence);
   bench::check(receiver.duplicates == 0, "received a datagram twice");

@@ -23,6 +23,7 @@ std::string scratch_path(std::string_view workload)
 
 asio::random_access_file create_file(asio::io_context &context, const std::string &path)
 {
+  require_io_uring("asio::random_access_file");
   return asio::random_access_file(context, path,
                                   asio::random_access_file::read_write | asio::random_access_file::create |
                                     asio::random_access_file::exclusive);

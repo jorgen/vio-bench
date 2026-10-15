@@ -4,12 +4,14 @@ use crate::support::{
 };
 use socket2::{Domain, Protocol, Socket, Type};
 use std::sync::mpsc::{SyncSender, sync_channel};
+use std::time::Duration;
 use tokio::net::UdpSocket;
-use tokio::time::{Instant, sleep};
+use tokio::time::{Instant, sleep_until};
 
 const RECEIVE_BUFFER: usize = 64 * 1024;
 const LARGEST_DATAGRAM: i64 = 65507;
 const SEQUENCE_BYTES: usize = std::mem::size_of::<u64>();
+const GIVE_UP_AFTER: Duration = Duration::from_secs(10);
 
 #[derive(Default)]
 struct SequenceSet {
@@ -59,25 +61,22 @@ fn bound_socket() -> UdpSocket {
 struct Received {
     seen: SequenceSet,
     duplicates: i64,
+    heard: bool,
 }
 
-async fn receive(size: usize, port: SyncSender<u16>) -> Received {
+async fn receive(size: usize, seconds: f64, port: SyncSender<u16>) -> Received {
     let socket = bound_socket();
+    let give_up_at = Instant::now() + nanos(bench::seconds_ns(seconds)) + GIVE_UP_AFTER;
     port.send(socket.local_addr().or_fail("local address").port()).or_fail("hand the port to the sender");
     let quiet = nanos(UDP_QUIET_NS);
     let mut buffer = vec![0u8; RECEIVE_BUFFER];
-    let mut received = Received { seen: SequenceSet::default(), duplicates: 0 };
-    let mut heard = false;
-    let mut quiet_since_last = std::pin::pin!(sleep(quiet));
+    let mut received = Received { seen: SequenceSet::default(), duplicates: 0, heard: false };
+    let mut deadline = std::pin::pin!(sleep_until(give_up_at));
     loop {
-        let datagram = if heard {
-            tokio::select! {
-                biased;
-                datagram = socket.recv_from(&mut buffer) => datagram,
-                () = &mut quiet_since_last => return received,
-            }
-        } else {
-            socket.recv_from(&mut buffer).await
+        let datagram = tokio::select! {
+            biased;
+            datagram = socket.recv_from(&mut buffer) => datagram,
+            () = &mut deadline => return received,
         };
         let (length, _) = datagram.or_fail("udp receive");
         check(length == size, "datagram of the wrong size");
@@ -85,8 +84,8 @@ async fn receive(size: usize, port: SyncSender<u16>) -> Received {
         if !received.seen.insert(sequence) {
             received.duplicates += 1;
         }
-        heard = true;
-        quiet_since_last.as_mut().reset(Instant::now() + quiet);
+        received.heard = true;
+        deadline.as_mut().reset(Instant::now() + quiet);
     }
 }
 
@@ -135,11 +134,19 @@ pub fn udp_flood(args: &Args) -> Report {
     let size = size as usize;
 
     let (port, port_ready) = sync_channel(1);
-    let receiver = spawn_side("udp-receiver", move || runtime().block_on(receive(size, port)));
+    let receiver = spawn_side("udp-receiver", move || runtime().block_on(receive(size, seconds, port)));
     let port = port_ready.recv().or_fail("the receiver did not start");
     let sent = runtime().block_on(send(port, size, seconds));
     let received = join_side(receiver, "receiver");
 
+    check(
+        received.heard,
+        &format!(
+            "the receiver heard nothing in {} s (seconds + {} s) and gave up",
+            seconds + GIVE_UP_AFTER.as_secs_f64(),
+            GIVE_UP_AFTER.as_secs()
+        ),
+    );
     if received.duplicates != 0 {
         fail("received a datagram twice");
     }

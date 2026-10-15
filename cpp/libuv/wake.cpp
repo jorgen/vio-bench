@@ -3,6 +3,7 @@
 #include <functional>
 #include <future>
 #include <mutex>
+#include <atomic>
 #include <thread>
 #include <vector>
 
@@ -143,7 +144,17 @@ bench::result_t wake_flood(const bench::args_t &args)
   flood.loop = loop.get();
   flood.count = count;
   std::int64_t start_ns = 0;
+  std::atomic<bool> loop_running = false;
+  uv_timer_t started;
+  uv_timer_init(loop.get(), &started);
+  started.data = &loop_running;
+  uv_timer_start(&started, [](uv_timer_t *timer) {
+    static_cast<std::atomic<bool> *>(timer->data)->store(true, std::memory_order_release);
+    uv_close(reinterpret_cast<uv_handle_t *>(timer), nullptr);
+  }, 0, 0);
   std::thread poster([&] {
+    while (!loop_running.load(std::memory_order_acquire))
+      std::this_thread::yield();
     start_ns = bench::now_ns();
     for (std::int64_t i = 0; i < count; ++i)
       mailbox.post([&flood] {

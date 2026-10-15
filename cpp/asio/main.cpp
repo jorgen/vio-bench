@@ -2,6 +2,9 @@
 
 int main(int argc, char **argv)
 {
+#if defined(ASIO_HAS_IO_URING_AS_DEFAULT)
+  asio_bench::require_io_uring("bench_asio_uring, built with ASIO_DISABLE_EPOLL,");
+#endif
   const bench::workloads_t workloads{
     {"tcp_rr", asio_bench::tcp_rr},
     {"tcp_bulk", asio_bench::tcp_bulk},

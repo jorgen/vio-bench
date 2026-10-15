@@ -13,6 +13,7 @@ namespace
 constexpr std::size_t receive_slot = 64 * 1024;
 constexpr std::int64_t largest_datagram = 65507;
 constexpr std::uint64_t quiet_check_ms = 10;
+constexpr std::uint64_t give_up_after_ms = 10'000;
 constexpr int no_recvmmsg = -1;
 constexpr std::size_t libuv_mmsg_width = 20;
 
@@ -76,6 +77,7 @@ struct receiver_t
   std::int64_t duplicates = 0;
   bool heard = false;
   std::uint64_t last_heard_ms = 0;
+  std::uint64_t give_up_at_ms = 0;
 };
 
 void receiver_alloc(uv_handle_t *handle, std::size_t, uv_buf_t *buf)
@@ -103,14 +105,17 @@ void receiver_read(uv_udp_t *udp, ssize_t nread, const uv_buf_t *buf, const sock
 void receiver_tick(uv_timer_t *timer)
 {
   auto *receiver = static_cast<receiver_t *>(timer->data);
-  if (!receiver->heard || uv_now(timer->loop) - receiver->last_heard_ms < std::uint64_t(bench::udp_quiet_ns / 1'000'000))
+  auto now = uv_now(timer->loop);
+  bool waiting = receiver->heard ? now - receiver->last_heard_ms < std::uint64_t(bench::udp_quiet_ns / 1'000'000)
+                                 : now < receiver->give_up_at_ms;
+  if (waiting)
     return;
   check_uv(uv_udp_recv_stop(&receiver->udp), "uv_udp_recv_stop");
   close_handle(&receiver->udp);
   close_handle(timer);
 }
 
-void run_receiver(receiver_t &receiver, std::int64_t batch, std::promise<int> &port)
+void run_receiver(receiver_t &receiver, std::int64_t batch, double seconds, std::promise<int> &port)
 {
   loop_t loop;
   unsigned flags = AF_INET | (batch > 0 ? unsigned(UV_UDP_RECVMMSG) : 0u);
@@ -128,6 +133,8 @@ void run_receiver(receiver_t &receiver, std::int64_t batch, std::promise<int> &p
   check_uv(uv_udp_recv_start(&receiver.udp, receiver_alloc, receiver_read), "uv_udp_recv_start");
   check_uv(uv_timer_init(loop.get(), &receiver.quiet), "uv_timer_init");
   receiver.quiet.data = &receiver;
+  uv_update_time(loop.get());
+  receiver.give_up_at_ms = uv_now(loop.get()) + ceil_ms(bench::seconds_ns(seconds)) + give_up_after_ms;
   check_uv(uv_timer_start(&receiver.quiet, receiver_tick, quiet_check_ms, quiet_check_ms), "uv_timer_start");
   sockaddr_storage bound{};
   int length = sizeof(bound);
@@ -248,7 +255,7 @@ bench::result_t udp_flood(const bench::args_t &args)
   receiver.size = size;
   std::promise<int> port;
   auto port_ready = port.get_future();
-  std::thread receiver_thread([&] { run_receiver(receiver, batch, port); });
+  std::thread receiver_thread([&] { run_receiver(receiver, batch, seconds, port); });
   auto receiver_port = port_ready.get();
   if (receiver_port == no_recvmmsg)
   {
@@ -291,6 +298,8 @@ bench::result_t udp_flood(const bench::args_t &args)
     send_one(sender, 0);
   loop.run_and_close();
   receiver_thread.join();
+  bench::check(receiver.heard, std::format("the receiver heard nothing in {} s (seconds + 10 s) and gave up",
+                                           seconds + double(give_up_after_ms) / 1000.0));
 
   auto sent = std::int64_t(sender.end_sequence - sender.first_measured);
   auto received = receiver.seen.count(sender.first_measured, sender.end_sequence);
