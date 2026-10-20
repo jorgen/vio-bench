@@ -5,7 +5,7 @@ a choice, where it departs from `METHOD.md` and why, and what makes a number har
 
 ## Setup
 
-- vio is pinned at `074a30a` (`VIO_PINNED_TAG` in `CMakeLists.txt`); `library_version` reports
+- vio is pinned at `45f78b1` (`VIO_PINNED_TAG` in `CMakeLists.txt`); `library_version` reports
   it. When `FETCHCONTENT_SOURCE_DIR_VIO` replaces the fetch, configure reads that tree's
   `.git/HEAD` as a file, without running git. It stops if HEAD names another commit, and only
   warns if HEAD names a branch.
@@ -36,18 +36,6 @@ a choice, where it departs from `METHOD.md` and why, and what makes a number har
 - In `tcp_rr` and `tls_handshake`, two `vio::sleep` timers on the client loop read `cpu_s` at the
   end of warm-up and at the end of the window, so each edge is good to one loop turn.
 - Any vio error fails the run, except on a connection the peer is closing.
-
-## The `-fno-lifetime-dse` flag on `tls.cpp`
-
-`CMakeLists.txt` compiles `tls.cpp` with `-fno-lifetime-dse` to work around a vio bug. At the
-pinned commit, `ring_buffer_t::pop_front` and `discard_front` (`src/vio/ring_buffer.h`) end the
-life of a `std::array` slot with an explicit destructor call, and a later push move-assigns into
-the same slot. GCC deletes the store that clears the moved-from `unique_buf_t`, since the
-destructor ends the slot's life right after it. The next push then frees that pointer a second
-time. Without the flag, `tls_bulk` aborts with "double free or corruption" on both backends.
-
-The TLS stream is the only user of `ring_buffer_t`, and `tls.cpp` is the only bench file that
-includes it. vio fixed the bug in commit `786b15e`. Drop the flag when the pin moves past it.
 
 ## vio API gaps
 
