@@ -1,0 +1,7188 @@
+{
+ "machine": {
+  "host": "vm",
+  "date": "2026-10-20 13:37 UTC",
+  "os": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+  "kernel": "6.18.44-fc-v139",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+  "cpus": 4,
+  "memory": "15 GiB",
+  "governor": "unknown",
+  "rmem_max": "4194304",
+  "wmem_max": "4194304",
+  "tcp_congestion_control": "cubic",
+  "default_qdisc": "pfifo_fast",
+  "io_uring_disabled": "0",
+  "cxx": "g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0",
+  "cxx_build": "Release  -O3 -DNDEBUG",
+  "rustc": "rustc 1.94.1 (e408947bf 2026-03-25)",
+  "python": "3.11.15"
+ },
+ "repeat": 5,
+ "quick": false,
+ "results": [
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 4.001375,
+     "ops_per_s": 18328.5,
+     "p50_us": 51.985,
+     "p99_us": 123.775
+    },
+    "spread": {
+     "cpu_s": [
+      3.9191,
+      4.004682
+     ],
+     "ops_per_s": [
+      17406.25,
+      18657.75
+     ],
+     "p50_us": [
+      49.688,
+      52.62
+     ],
+     "p99_us": [
+      121.083,
+      136.149
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.004682,
+      "ops_per_s": 18657.75,
+      "p50_us": 49.688,
+      "p99_us": 121.256
+     },
+     {
+      "cpu_s": 3.992616,
+      "ops_per_s": 17406.25,
+      "p50_us": 52.62,
+      "p99_us": 126.858
+     },
+     {
+      "cpu_s": 4.001375,
+      "ops_per_s": 18328.5,
+      "p50_us": 51.985,
+      "p99_us": 123.775
+     },
+     {
+      "cpu_s": 4.001386999999999,
+      "ops_per_s": 18148.5,
+      "p50_us": 50.567,
+      "p99_us": 121.083
+     },
+     {
+      "cpu_s": 3.9191,
+      "ops_per_s": 18513.25,
+      "p50_us": 52.611,
+      "p99_us": 136.149
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 4776384,
+     "requests": 74631
+    },
+    "max_load": 3.85888671875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 4.0906460000000004,
+     "ops_per_s": 16641,
+     "p50_us": 53.861,
+     "p99_us": 134.686
+    },
+    "spread": {
+     "cpu_s": [
+      4.086342,
+      4.1205929999999995
+     ],
+     "ops_per_s": [
+      16163.25,
+      17464.5
+     ],
+     "p50_us": [
+      52.419,
+      56.304
+     ],
+     "p99_us": [
+      127.839,
+      136.412
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.090918,
+      "ops_per_s": 17464.5,
+      "p50_us": 52.419,
+      "p99_us": 127.868
+     },
+     {
+      "cpu_s": 4.1205929999999995,
+      "ops_per_s": 17068.75,
+      "p50_us": 53.453,
+      "p99_us": 127.839
+     },
+     {
+      "cpu_s": 4.087806,
+      "ops_per_s": 16163.25,
+      "p50_us": 56.304,
+      "p99_us": 134.686
+     },
+     {
+      "cpu_s": 4.086342,
+      "ops_per_s": 16641,
+      "p50_us": 53.861,
+      "p99_us": 135.238
+     },
+     {
+      "cpu_s": 4.0906460000000004,
+      "ops_per_s": 16209,
+      "p50_us": 55.974,
+      "p99_us": 136.412
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 4470912,
+     "requests": 69858
+    },
+    "max_load": 3.00244140625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 3.9558540000000004,
+     "ops_per_s": 17149.902399905444,
+     "p50_us": 53.549,
+     "p99_us": 130.912
+    },
+    "spread": {
+     "cpu_s": [
+      3.9399659999999996,
+      3.9597929999999995
+     ],
+     "ops_per_s": [
+      16705.535515968506,
+      17258.612465748134
+     ],
+     "p50_us": [
+      53.152,
+      54.395
+     ],
+     "p99_us": [
+      124.277,
+      138.866
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 3.9597929999999995,
+      "ops_per_s": 16705.535515968506,
+      "p50_us": 54.395,
+      "p99_us": 138.866
+     },
+     {
+      "cpu_s": 3.9558540000000004,
+      "ops_per_s": 17149.902399905444,
+      "p50_us": 53.549,
+      "p99_us": 133.151
+     },
+     {
+      "cpu_s": 3.9399659999999996,
+      "ops_per_s": 17067.087435992173,
+      "p50_us": 53.579,
+      "p99_us": 130.912
+     },
+     {
+      "cpu_s": 3.9589299999999996,
+      "ops_per_s": 17258.612465748134,
+      "p50_us": 53.306,
+      "p99_us": 124.277
+     },
+     {
+      "cpu_s": 3.9443400000000004,
+      "ops_per_s": 17201.267286192044,
+      "p50_us": 53.152,
+      "p99_us": 129.131
+     }
+    ],
+    "work": {
+     "bytes": 4276608,
+     "requests": 66822
+    },
+    "max_load": 2.45947265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 4.047994,
+     "ops_per_s": 17604.748252099995,
+     "p50_us": 52.522,
+     "p99_us": 119.662
+    },
+    "spread": {
+     "cpu_s": [
+      4.046570999999999,
+      4.077894
+     ],
+     "ops_per_s": [
+      17275.840159607884,
+      18112.266787362445
+     ],
+     "p50_us": [
+      50.92,
+      53.705
+     ],
+     "p99_us": [
+      118.636,
+      125.981
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.046570999999999,
+      "ops_per_s": 17582.092178976385,
+      "p50_us": 52.522,
+      "p99_us": 125.981
+     },
+     {
+      "cpu_s": 4.047994,
+      "ops_per_s": 17604.748252099995,
+      "p50_us": 52.189,
+      "p99_us": 125.805
+     },
+     {
+      "cpu_s": 4.067004,
+      "ops_per_s": 17654.907357971722,
+      "p50_us": 53.344,
+      "p99_us": 119.662
+     },
+     {
+      "cpu_s": 4.047518999999999,
+      "ops_per_s": 17275.840159607884,
+      "p50_us": 53.705,
+      "p99_us": 118.636
+     },
+     {
+      "cpu_s": 4.077894,
+      "ops_per_s": 18112.266787362445,
+      "p50_us": 50.92,
+      "p99_us": 118.836
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 4501120,
+     "requests": 70330
+    },
+    "max_load": 2.2392578125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 4.199897,
+     "ops_per_s": 16625.07222394644,
+     "p50_us": 55.045,
+     "p99_us": 129.53
+    },
+    "spread": {
+     "cpu_s": [
+      4.193477000000001,
+      4.259164
+     ],
+     "ops_per_s": [
+      16457.61827377295,
+      17347.754876223597
+     ],
+     "p50_us": [
+      53.491,
+      55.728
+     ],
+     "p99_us": [
+      119.059,
+      132.56
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.194633,
+      "ops_per_s": 16457.61827377295,
+      "p50_us": 55.045,
+      "p99_us": 131.62
+     },
+     {
+      "cpu_s": 4.199897,
+      "ops_per_s": 16625.07222394644,
+      "p50_us": 55.728,
+      "p99_us": 129.53
+     },
+     {
+      "cpu_s": 4.193477000000001,
+      "ops_per_s": 16459.06648876252,
+      "p50_us": 55.252,
+      "p99_us": 132.56
+     },
+     {
+      "cpu_s": 4.259164,
+      "ops_per_s": 17347.754876223597,
+      "p50_us": 53.491,
+      "p99_us": 124.298
+     },
+     {
+      "cpu_s": 4.254025,
+      "ops_per_s": 17336.101291340427,
+      "p50_us": 54.68,
+      "p99_us": 119.059
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 4213248,
+     "requests": 65832
+    },
+    "max_load": 1.87255859375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 3.891721,
+     "ops_per_s": 18116.451307970015,
+     "p50_us": 52.848,
+     "p99_us": 131.115
+    },
+    "spread": {
+     "cpu_s": [
+      3.872864,
+      3.9396060000000004
+     ],
+     "ops_per_s": [
+      15758.107800146492,
+      18193.57932612182
+     ],
+     "p50_us": [
+      51,
+      58.397
+     ],
+     "p99_us": [
+      116.617,
+      137.983
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 3.891721,
+      "ops_per_s": 18116.451307970015,
+      "p50_us": 51.224,
+      "p99_us": 119.879
+     },
+     {
+      "cpu_s": 3.9396060000000004,
+      "ops_per_s": 18193.57932612182,
+      "p50_us": 51,
+      "p99_us": 116.617
+     },
+     {
+      "cpu_s": 3.872864,
+      "ops_per_s": 16814.040688983718,
+      "p50_us": 54.126,
+      "p99_us": 134.016
+     },
+     {
+      "cpu_s": 3.8997829999999998,
+      "ops_per_s": 15758.107800146492,
+      "p50_us": 58.397,
+      "p99_us": 137.983
+     },
+     {
+      "cpu_s": 3.8869540000000002,
+      "ops_per_s": 18125.46327810607,
+      "p50_us": 52.848,
+      "p99_us": 131.115
+     }
+    ],
+    "work": {
+     "bytes": 4641408,
+     "requests": 72522
+    },
+    "max_load": 1.8134765625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 7.297867999999999,
+     "ops_per_s": 124897.25,
+     "p50_us": 448.859,
+     "p99_us": 1343.848
+    },
+    "spread": {
+     "cpu_s": [
+      7.142506999999999,
+      7.407781999999999
+     ],
+     "ops_per_s": [
+      120982,
+      146620
+     ],
+     "p50_us": [
+      338.785,
+      457.733
+     ],
+     "p99_us": [
+      1212.564,
+      1815.13
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.349939000000001,
+      "ops_per_s": 131818.75,
+      "p50_us": 433.802,
+      "p99_us": 1212.564
+     },
+     {
+      "cpu_s": 7.142506999999999,
+      "ops_per_s": 120986.5,
+      "p50_us": 457.733,
+      "p99_us": 1343.848
+     },
+     {
+      "cpu_s": 7.407781999999999,
+      "ops_per_s": 146620,
+      "p50_us": 338.785,
+      "p99_us": 1243.473
+     },
+     {
+      "cpu_s": 7.297867999999999,
+      "ops_per_s": 124897.25,
+      "p50_us": 448.859,
+      "p99_us": 1366.347
+     },
+     {
+      "cpu_s": 7.230249000000001,
+      "ops_per_s": 120982,
+      "p50_us": 450.205,
+      "p99_us": 1815.13
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 33745600,
+     "requests": 527275
+    },
+    "max_load": 1.7255859375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 7.436337000000001,
+     "ops_per_s": 135004.5,
+     "p50_us": 387.206,
+     "p99_us": 1241.746
+    },
+    "spread": {
+     "cpu_s": [
+      7.168325,
+      7.599244
+     ],
+     "ops_per_s": [
+      106715,
+      156340.5
+     ],
+     "p50_us": [
+      334.626,
+      502.682
+     ],
+     "p99_us": [
+      1160.263,
+      2079.831
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.599244,
+      "ops_per_s": 156340.5,
+      "p50_us": 334.626,
+      "p99_us": 1160.263
+     },
+     {
+      "cpu_s": 7.168325,
+      "ops_per_s": 106715,
+      "p50_us": 502.682,
+      "p99_us": 2079.831
+     },
+     {
+      "cpu_s": 7.284109999999999,
+      "ops_per_s": 136402.5,
+      "p50_us": 355.787,
+      "p99_us": 1236.67
+     },
+     {
+      "cpu_s": 7.436337000000001,
+      "ops_per_s": 135004.5,
+      "p50_us": 387.206,
+      "p99_us": 1241.746
+     },
+     {
+      "cpu_s": 7.4464369999999995,
+      "ops_per_s": 123557.25,
+      "p50_us": 488.577,
+      "p99_us": 1331.371
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 40023168,
+     "requests": 625362
+    },
+    "max_load": 1.8203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 7.372648,
+     "ops_per_s": 131955.56570369095,
+     "p50_us": 416.097,
+     "p99_us": 1379.187
+    },
+    "spread": {
+     "cpu_s": [
+      7.1118879999999995,
+      7.569890000000001
+     ],
+     "ops_per_s": [
+      112618.75258397881,
+      148760.92184711204
+     ],
+     "p50_us": [
+      370.412,
+      492.719
+     ],
+     "p99_us": [
+      1215.426,
+      1695.537
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.1118879999999995,
+      "ops_per_s": 112618.75258397881,
+      "p50_us": 492.719,
+      "p99_us": 1695.537
+     },
+     {
+      "cpu_s": 7.372648,
+      "ops_per_s": 137740.99204913664,
+      "p50_us": 370.552,
+      "p99_us": 1443.595
+     },
+     {
+      "cpu_s": 7.327643999999999,
+      "ops_per_s": 131955.56570369095,
+      "p50_us": 416.097,
+      "p99_us": 1379.187
+     },
+     {
+      "cpu_s": 7.569890000000001,
+      "ops_per_s": 148760.92184711204,
+      "p50_us": 370.412,
+      "p99_us": 1215.426
+     },
+     {
+      "cpu_s": 7.3837209999999995,
+      "ops_per_s": 123247.85799743318,
+      "p50_us": 470.728,
+      "p99_us": 1287.046
+     }
+    ],
+    "work": {
+     "bytes": 28829504,
+     "requests": 450461
+    },
+    "max_load": 1.8251953125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.396558999999999,
+     "ops_per_s": 137133.58187397366,
+     "p50_us": 459.241,
+     "p99_us": 1126.044
+    },
+    "spread": {
+     "cpu_s": [
+      7.227695999999999,
+      7.526801
+     ],
+     "ops_per_s": [
+      128832.28141723723,
+      144857.0171584513
+     ],
+     "p50_us": [
+      388.214,
+      472.887
+     ],
+     "p99_us": [
+      1038.755,
+      1332.299
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.450429,
+      "ops_per_s": 144857.0171584513,
+      "p50_us": 398.862,
+      "p99_us": 1038.755
+     },
+     {
+      "cpu_s": 7.227695999999999,
+      "ops_per_s": 138612.3574942837,
+      "p50_us": 388.214,
+      "p99_us": 1231.607
+     },
+     {
+      "cpu_s": 7.526801,
+      "ops_per_s": 137133.58187397366,
+      "p50_us": 459.241,
+      "p99_us": 1117.217
+     },
+     {
+      "cpu_s": 7.396558999999999,
+      "ops_per_s": 128832.28141723723,
+      "p50_us": 472.887,
+      "p99_us": 1332.299
+     },
+     {
+      "cpu_s": 7.324966000000001,
+      "ops_per_s": 129900.34369410835,
+      "p50_us": 459.44,
+      "p99_us": 1126.044
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 37091200,
+     "requests": 579550
+    },
+    "max_load": 1.8759765625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.7176,
+     "ops_per_s": 84335.07165213369,
+     "p50_us": 671.287,
+     "p99_us": 2057.36
+    },
+    "spread": {
+     "cpu_s": [
+      7.601750999999999,
+      7.794162
+     ],
+     "ops_per_s": [
+      74331.47252657764,
+      87085.29593137569
+     ],
+     "p50_us": [
+      633.668,
+      749.233
+     ],
+     "p99_us": [
+      1961.814,
+      2182.075
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.794162,
+      "ops_per_s": 87085.29593137569,
+      "p50_us": 641.455,
+      "p99_us": 1991.662
+     },
+     {
+      "cpu_s": 7.754824000000001,
+      "ops_per_s": 85997.78337890396,
+      "p50_us": 633.668,
+      "p99_us": 2182.075
+     },
+     {
+      "cpu_s": 7.601750999999999,
+      "ops_per_s": 75579.92661937569,
+      "p50_us": 707.265,
+      "p99_us": 2059.198
+     },
+     {
+      "cpu_s": 7.7176,
+      "ops_per_s": 84335.07165213369,
+      "p50_us": 671.287,
+      "p99_us": 1961.814
+     },
+     {
+      "cpu_s": 7.667273999999999,
+      "ops_per_s": 74331.47252657764,
+      "p50_us": 749.233,
+      "p99_us": 2057.36
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 22297280,
+     "requests": 348395
+    },
+    "max_load": 1.87255859375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 64,
+    "size": 64,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 7.338309000000001,
+     "ops_per_s": 139154.35362143602,
+     "p50_us": 392.833,
+     "p99_us": 1224.267
+    },
+    "spread": {
+     "cpu_s": [
+      7.199776,
+      7.546389999999999
+     ],
+     "ops_per_s": [
+      132531.00194393026,
+      171594.2694572511
+     ],
+     "p50_us": [
+      285.679,
+      452.321
+     ],
+     "p99_us": [
+      1153.714,
+      1550.289
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.199776,
+      "ops_per_s": 139154.35362143602,
+      "p50_us": 392.833,
+      "p99_us": 1232.902
+     },
+     {
+      "cpu_s": 7.533563999999999,
+      "ops_per_s": 171594.2694572511,
+      "p50_us": 285.679,
+      "p99_us": 1153.714
+     },
+     {
+      "cpu_s": 7.338309000000001,
+      "ops_per_s": 138071.63693277494,
+      "p50_us": 413.344,
+      "p99_us": 1550.289
+     },
+     {
+      "cpu_s": 7.276325999999999,
+      "ops_per_s": 147862.60660259463,
+      "p50_us": 341.989,
+      "p99_us": 1224.267
+     },
+     {
+      "cpu_s": 7.546389999999999,
+      "ops_per_s": 132531.00194393026,
+      "p50_us": 452.321,
+      "p99_us": 1190.306
+     }
+    ],
+    "work": {
+     "bytes": 35629440,
+     "requests": 556710
+    },
+    "max_load": 1.8828125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 6.912211000000001,
+     "ops_per_s": 168926.25,
+     "p50_us": 46.259,
+     "p99_us": 225.252
+    },
+    "spread": {
+     "cpu_s": [
+      6.711531,
+      7.057171
+     ],
+     "ops_per_s": [
+      157822.75,
+      190683
+     ],
+     "p50_us": [
+      41.75,
+      47.488
+     ],
+     "p99_us": [
+      189.778,
+      232.022
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.057171,
+      "ops_per_s": 190683,
+      "p50_us": 41.75,
+      "p99_us": 189.778
+     },
+     {
+      "cpu_s": 6.9539040000000005,
+      "ops_per_s": 169526.5,
+      "p50_us": 46.259,
+      "p99_us": 213.719
+     },
+     {
+      "cpu_s": 6.711531,
+      "ops_per_s": 168926.25,
+      "p50_us": 44.65,
+      "p99_us": 225.252
+     },
+     {
+      "cpu_s": 6.822193,
+      "ops_per_s": 157822.75,
+      "p50_us": 46.816,
+      "p99_us": 232.022
+     },
+     {
+      "cpu_s": 6.912211000000001,
+      "ops_per_s": 159628.25,
+      "p50_us": 47.488,
+      "p99_us": 231.564
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 48814848,
+     "requests": 762732
+    },
+    "max_load": 1.8662109375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 6.992528,
+     "ops_per_s": 171684.5,
+     "p50_us": 45.461,
+     "p99_us": 206.171
+    },
+    "spread": {
+     "cpu_s": [
+      6.979876000000001,
+      7.093523000000001
+     ],
+     "ops_per_s": [
+      168460.75,
+      181555.75
+     ],
+     "p50_us": [
+      43.016,
+      45.73
+     ],
+     "p99_us": [
+      195.736,
+      211.599
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 6.988938999999999,
+      "ops_per_s": 176158.75,
+      "p50_us": 43.877,
+      "p99_us": 203.931
+     },
+     {
+      "cpu_s": 7.093523000000001,
+      "ops_per_s": 171684.5,
+      "p50_us": 45.461,
+      "p99_us": 206.171
+     },
+     {
+      "cpu_s": 7.041155999999999,
+      "ops_per_s": 181555.75,
+      "p50_us": 43.016,
+      "p99_us": 209.79
+     },
+     {
+      "cpu_s": 6.979876000000001,
+      "ops_per_s": 171677,
+      "p50_us": 45.585,
+      "p99_us": 195.736
+     },
+     {
+      "cpu_s": 6.992528,
+      "ops_per_s": 168460.75,
+      "p50_us": 45.73,
+      "p99_us": 211.599
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 45096640,
+     "requests": 704635
+    },
+    "max_load": 1.89697265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 6.892548,
+     "ops_per_s": 159448.51071444806,
+     "p50_us": 49.876,
+     "p99_us": 212.486
+    },
+    "spread": {
+     "cpu_s": [
+      6.522736999999999,
+      6.957066
+     ],
+     "ops_per_s": [
+      139438.3849453249,
+      167483.38848710593
+     ],
+     "p50_us": [
+      47.186,
+      53.437
+     ],
+     "p99_us": [
+      199.829,
+      285.711
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 6.522736999999999,
+      "ops_per_s": 139438.3849453249,
+      "p50_us": 49.876,
+      "p99_us": 285.711
+     },
+     {
+      "cpu_s": 6.957066,
+      "ops_per_s": 159448.51071444806,
+      "p50_us": 50.854,
+      "p99_us": 201.139
+     },
+     {
+      "cpu_s": 6.880429999999999,
+      "ops_per_s": 167483.38848710593,
+      "p50_us": 47.186,
+      "p99_us": 199.829
+     },
+     {
+      "cpu_s": 6.915022,
+      "ops_per_s": 149362.31565777058,
+      "p50_us": 53.437,
+      "p99_us": 231.065
+     },
+     {
+      "cpu_s": 6.892548,
+      "ops_per_s": 159468.6178299047,
+      "p50_us": 49.452,
+      "p99_us": 212.486
+     }
+    ],
+    "work": {
+     "bytes": 35695488,
+     "requests": 557742
+    },
+    "max_load": 1.93310546875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.112667999999999,
+     "ops_per_s": 156924.59589607213,
+     "p50_us": 51.665,
+     "p99_us": 227.563
+    },
+    "spread": {
+     "cpu_s": [
+      7.071824999999999,
+      7.182303999999999
+     ],
+     "ops_per_s": [
+      137572.9714043033,
+      166141.7066888889
+     ],
+     "p50_us": [
+      47.372,
+      55.403
+     ],
+     "p99_us": [
+      214.153,
+      256.79
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.112667999999999,
+      "ops_per_s": 166141.7066888889,
+      "p50_us": 47.372,
+      "p99_us": 225.177
+     },
+     {
+      "cpu_s": 7.099898,
+      "ops_per_s": 150107.78433545778,
+      "p50_us": 52.075,
+      "p99_us": 242.713
+     },
+     {
+      "cpu_s": 7.071824999999999,
+      "ops_per_s": 137572.9714043033,
+      "p50_us": 55.403,
+      "p99_us": 256.79
+     },
+     {
+      "cpu_s": 7.139239999999999,
+      "ops_per_s": 159390.12288873925,
+      "p50_us": 49.707,
+      "p99_us": 227.563
+     },
+     {
+      "cpu_s": 7.182303999999999,
+      "ops_per_s": 156924.59589607213,
+      "p50_us": 51.665,
+      "p99_us": 214.153
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 42533440,
+     "requests": 664585
+    },
+    "max_load": 1.95703125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.150558999999999,
+     "ops_per_s": 135845.11701687175,
+     "p50_us": 55.41,
+     "p99_us": 250.778
+    },
+    "spread": {
+     "cpu_s": [
+      7.059482000000001,
+      7.244785
+     ],
+     "ops_per_s": [
+      134979.45248572063,
+      151539.83203327798
+     ],
+     "p50_us": [
+      50.629,
+      57.536
+     ],
+     "p99_us": [
+      232.489,
+      267.833
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.244785,
+      "ops_per_s": 151539.83203327798,
+      "p50_us": 50.629,
+      "p99_us": 232.489
+     },
+     {
+      "cpu_s": 7.145360999999999,
+      "ops_per_s": 143533.6696961431,
+      "p50_us": 53.731,
+      "p99_us": 246.027
+     },
+     {
+      "cpu_s": 7.059482000000001,
+      "ops_per_s": 135116.99253306267,
+      "p50_us": 55.41,
+      "p99_us": 267.833
+     },
+     {
+      "cpu_s": 7.150558999999999,
+      "ops_per_s": 135845.11701687175,
+      "p50_us": 56.857,
+      "p99_us": 250.778
+     },
+     {
+      "cpu_s": 7.156504,
+      "ops_per_s": 134979.45248572063,
+      "p50_us": 57.536,
+      "p99_us": 252.469
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 38794752,
+     "requests": 606168
+    },
+    "max_load": 1.97265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 1,
+    "size": 64,
+    "depth": 16,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 6.810635,
+     "ops_per_s": 160939.10736998703,
+     "p50_us": 48.827,
+     "p99_us": 216.167
+    },
+    "spread": {
+     "cpu_s": [
+      6.762029,
+      6.937277
+     ],
+     "ops_per_s": [
+      143855.74788027277,
+      174604.26562789435
+     ],
+     "p50_us": [
+      45.939,
+      52.97
+     ],
+     "p99_us": [
+      191.153,
+      266.733
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 6.810635,
+      "ops_per_s": 160939.10736998703,
+      "p50_us": 48.827,
+      "p99_us": 216.167
+     },
+     {
+      "cpu_s": 6.762029,
+      "ops_per_s": 149711.80125838265,
+      "p50_us": 49.995,
+      "p99_us": 266.733
+     },
+     {
+      "cpu_s": 6.876195,
+      "ops_per_s": 165432.55285070452,
+      "p50_us": 47.667,
+      "p99_us": 192.422
+     },
+     {
+      "cpu_s": 6.937277,
+      "ops_per_s": 174604.26562789435,
+      "p50_us": 45.939,
+      "p99_us": 191.153
+     },
+     {
+      "cpu_s": 6.765585999999999,
+      "ops_per_s": 143855.74788027277,
+      "p50_us": 52.97,
+      "p99_us": 251.25
+     }
+    ],
+    "work": {
+     "bytes": 41210112,
+     "requests": 643908
+    },
+    "max_load": 1.9833984375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 7.312284999999999,
+     "ops_per_s": 93985.5,
+     "p50_us": 146.051,
+     "p99_us": 455.398
+    },
+    "spread": {
+     "cpu_s": [
+      7.267721999999999,
+      7.468818000000001
+     ],
+     "ops_per_s": [
+      85157,
+      103528.75
+     ],
+     "p50_us": [
+      132.421,
+      168.488
+     ],
+     "p99_us": [
+      446.52,
+      491.071
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.343471999999999,
+      "ops_per_s": 85157,
+      "p50_us": 168.488,
+      "p99_us": 455.398
+     },
+     {
+      "cpu_s": 7.267721999999999,
+      "ops_per_s": 98108.5,
+      "p50_us": 132.421,
+      "p99_us": 463.64
+     },
+     {
+      "cpu_s": 7.468818000000001,
+      "ops_per_s": 103528.75,
+      "p50_us": 133.099,
+      "p99_us": 446.52
+     },
+     {
+      "cpu_s": 7.312284999999999,
+      "ops_per_s": 93985.5,
+      "p50_us": 146.051,
+      "p99_us": 453.407
+     },
+     {
+      "cpu_s": 7.305370999999999,
+      "ops_per_s": 88738,
+      "p50_us": 160.924,
+      "p99_us": 491.071
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 5580849152,
+     "requests": 340628
+    },
+    "max_load": 1.986328125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 7.2398240000000005,
+     "ops_per_s": 81324.75,
+     "p50_us": 168.679,
+     "p99_us": 581.953
+    },
+    "spread": {
+     "cpu_s": [
+      7.081473000000001,
+      7.348452000000001
+     ],
+     "ops_per_s": [
+      79951.25,
+      90746.75
+     ],
+     "p50_us": [
+      142.172,
+      177.295
+     ],
+     "p99_us": [
+      499.333,
+      701.69
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.184637,
+      "ops_per_s": 81324.75,
+      "p50_us": 176.506,
+      "p99_us": 499.333
+     },
+     {
+      "cpu_s": 7.081473000000001,
+      "ops_per_s": 81296.25,
+      "p50_us": 155.299,
+      "p99_us": 701.69
+     },
+     {
+      "cpu_s": 7.348452000000001,
+      "ops_per_s": 79951.25,
+      "p50_us": 177.295,
+      "p99_us": 581.953
+     },
+     {
+      "cpu_s": 7.247614,
+      "ops_per_s": 90746.75,
+      "p50_us": 142.172,
+      "p99_us": 509.801
+     },
+     {
+      "cpu_s": 7.2398240000000005,
+      "ops_per_s": 84070.5,
+      "p50_us": 168.679,
+      "p99_us": 627.054
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 5329698816,
+     "requests": 325299
+    },
+    "max_load": 1.94921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 7.357952999999999,
+     "ops_per_s": 97737.96954829429,
+     "p50_us": 143.245,
+     "p99_us": 521.146
+    },
+    "spread": {
+     "cpu_s": [
+      7.068687000000001,
+      7.460623
+     ],
+     "ops_per_s": [
+      81225.50181159643,
+      100256.85105890587
+     ],
+     "p50_us": [
+      135.448,
+      164.68
+     ],
+     "p99_us": [
+      479.193,
+      630.788
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.068687000000001,
+      "ops_per_s": 81225.50181159643,
+      "p50_us": 164.68,
+      "p99_us": 630.788
+     },
+     {
+      "cpu_s": 7.357952999999999,
+      "ops_per_s": 83976.02828901887,
+      "p50_us": 163.325,
+      "p99_us": 598.921
+     },
+     {
+      "cpu_s": 7.436867999999999,
+      "ops_per_s": 100256.85105890587,
+      "p50_us": 135.448,
+      "p99_us": 521.146
+     },
+     {
+      "cpu_s": 7.460623,
+      "ops_per_s": 98396.67804606943,
+      "p50_us": 142.968,
+      "p99_us": 479.193
+     },
+     {
+      "cpu_s": 7.285462000000001,
+      "ops_per_s": 97737.96954829429,
+      "p50_us": 143.245,
+      "p99_us": 515.054
+     }
+    ],
+    "work": {
+     "bytes": 5323243520,
+     "requests": 324905
+    },
+    "max_load": 1.96728515625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.261396999999999,
+     "ops_per_s": 83982.80584413663,
+     "p50_us": 167.465,
+     "p99_us": 479.836
+    },
+    "spread": {
+     "cpu_s": [
+      7.131512,
+      7.420243
+     ],
+     "ops_per_s": [
+      81978.9296294729,
+      102056.48998325069
+     ],
+     "p50_us": [
+      137.976,
+      173.465
+     ],
+     "p99_us": [
+      368.85,
+      529.666
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.175078,
+      "ops_per_s": 81978.9296294729,
+      "p50_us": 173.465,
+      "p99_us": 479.836
+     },
+     {
+      "cpu_s": 7.420243,
+      "ops_per_s": 102056.48998325069,
+      "p50_us": 137.976,
+      "p99_us": 368.85
+     },
+     {
+      "cpu_s": 7.317003999999999,
+      "ops_per_s": 93713.65452754618,
+      "p50_us": 156.402,
+      "p99_us": 471.342
+     },
+     {
+      "cpu_s": 7.261396999999999,
+      "ops_per_s": 82739.40918495403,
+      "p50_us": 172.629,
+      "p99_us": 529.666
+     },
+     {
+      "cpu_s": 7.131512,
+      "ops_per_s": 83982.80584413663,
+      "p50_us": 167.465,
+      "p99_us": 521.907
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 5372985344,
+     "requests": 327941
+    },
+    "max_load": 1.97265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 7.544244000000001,
+     "ops_per_s": 49473.415383482476,
+     "p50_us": 290.968,
+     "p99_us": 735.036
+    },
+    "spread": {
+     "cpu_s": [
+      7.433365,
+      7.666480999999999
+     ],
+     "ops_per_s": [
+      45974.60122598207,
+      55903.58951851836
+     ],
+     "p50_us": [
+      256.8,
+      314.661
+     ],
+     "p99_us": [
+      598.179,
+      827.547
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.544244000000001,
+      "ops_per_s": 49473.415383482476,
+      "p50_us": 290.968,
+      "p99_us": 735.036
+     },
+     {
+      "cpu_s": 7.433365,
+      "ops_per_s": 47139.23662137667,
+      "p50_us": 298.543,
+      "p99_us": 827.547
+     },
+     {
+      "cpu_s": 7.487533,
+      "ops_per_s": 45974.60122598207,
+      "p50_us": 314.661,
+      "p99_us": 811.058
+     },
+     {
+      "cpu_s": 7.5831349999999995,
+      "ops_per_s": 51712.75445120709,
+      "p50_us": 280.083,
+      "p99_us": 622.323
+     },
+     {
+      "cpu_s": 7.666480999999999,
+      "ops_per_s": 55903.58951851836,
+      "p50_us": 256.8,
+      "p99_us": 598.179
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 3242344448,
+     "requests": 197897
+    },
+    "max_load": 1.88916015625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_rr",
+   "params": {
+    "connections": 16,
+    "size": 16384,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 7.289567,
+     "ops_per_s": 97772.32043390886,
+     "p50_us": 144.413,
+     "p99_us": 465.631
+    },
+    "spread": {
+     "cpu_s": [
+      7.146132999999999,
+      7.406768
+     ],
+     "ops_per_s": [
+      85642.10320906361,
+      103087.10658552796
+     ],
+     "p50_us": [
+      129.355,
+      163.117
+     ],
+     "p99_us": [
+      426.511,
+      504.162
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 7.146132999999999,
+      "ops_per_s": 85642.10320906361,
+      "p50_us": 163.117,
+      "p99_us": 504.162
+     },
+     {
+      "cpu_s": 7.406768,
+      "ops_per_s": 93513.74214684333,
+      "p50_us": 160.154,
+      "p99_us": 426.511
+     },
+     {
+      "cpu_s": 7.289567,
+      "ops_per_s": 103087.10658552796,
+      "p50_us": 130.392,
+      "p99_us": 438.528
+     },
+     {
+      "cpu_s": 7.297081,
+      "ops_per_s": 97772.32043390886,
+      "p50_us": 144.413,
+      "p99_us": 465.631
+     },
+     {
+      "cpu_s": 7.194249000000001,
+      "ops_per_s": 98551.56432991938,
+      "p50_us": 129.355,
+      "p99_us": 495.341
+     }
+    ],
+    "work": {
+     "bytes": 5613993984,
+     "requests": 342651
+    },
+    "max_load": 1.92822265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 0.9636699999999999,
+     "mib_per_s": 3104.860849013193
+    },
+    "spread": {
+     "cpu_s": [
+      0.8468169999999999,
+      1.215462
+     ],
+     "mib_per_s": [
+      2488.208225705368,
+      3878.5326448953037
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.104914,
+      "mib_per_s": 2813.4724540694406
+     },
+     {
+      "cpu_s": 0.9578599999999999,
+      "mib_per_s": 3305.8506251879267
+     },
+     {
+      "cpu_s": 0.8468169999999999,
+      "mib_per_s": 3878.5326448953037
+     },
+     {
+      "cpu_s": 1.215462,
+      "mib_per_s": 2488.208225705368
+     },
+     {
+      "cpu_s": 0.9636699999999999,
+      "mib_per_s": 3104.860849013193
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 2147483648
+    },
+    "max_load": 1.93408203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 0.8778429999999999,
+     "mib_per_s": 3670.925445054675
+    },
+    "spread": {
+     "cpu_s": [
+      0.810069,
+      1.40903
+     ],
+     "mib_per_s": [
+      2388.314401187621,
+      4096.716917267088
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 0.82892,
+      "mib_per_s": 3987.950998020956
+     },
+     {
+      "cpu_s": 0.8778429999999999,
+      "mib_per_s": 3670.925445054675
+     },
+     {
+      "cpu_s": 1.051884,
+      "mib_per_s": 2834.916522318591
+     },
+     {
+      "cpu_s": 1.40903,
+      "mib_per_s": 2388.314401187621
+     },
+     {
+      "cpu_s": 0.810069,
+      "mib_per_s": 4096.716917267088
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 2147483648
+    },
+    "max_load": 1.939453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 1.0116390000000002,
+     "mib_per_s": 3062.779065645468
+    },
+    "spread": {
+     "cpu_s": [
+      0.844099,
+      1.319023
+     ],
+     "mib_per_s": [
+      2531.8898824716002,
+      3835.9589179738364
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 0.916953,
+      "mib_per_s": 3613.5161539134297
+     },
+     {
+      "cpu_s": 1.20904,
+      "mib_per_s": 2549.405959469213
+     },
+     {
+      "cpu_s": 1.0116390000000002,
+      "mib_per_s": 3062.779065645468
+     },
+     {
+      "cpu_s": 0.844099,
+      "mib_per_s": 3835.9589179738364
+     },
+     {
+      "cpu_s": 1.319023,
+      "mib_per_s": 2531.8898824716002
+     }
+    ],
+    "work": {
+     "bytes": 2147483648
+    },
+    "max_load": 1.939453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 1.062506,
+     "mib_per_s": 3062.670404596078
+    },
+    "spread": {
+     "cpu_s": [
+      0.860919,
+      1.352319
+     ],
+     "mib_per_s": [
+      2334.120285558692,
+      3917.915282481673
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 0.860919,
+      "mib_per_s": 3765.6628937353817
+     },
+     {
+      "cpu_s": 1.062506,
+      "mib_per_s": 3062.670404596078
+     },
+     {
+      "cpu_s": 1.283145,
+      "mib_per_s": 2579.923361411373
+     },
+     {
+      "cpu_s": 1.352319,
+      "mib_per_s": 2334.120285558692
+     },
+     {
+      "cpu_s": 0.8890659999999999,
+      "mib_per_s": 3917.915282481673
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 2147483648
+    },
+    "max_load": 1.939453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 1.124276,
+     "mib_per_s": 2976.6411414795543
+    },
+    "spread": {
+     "cpu_s": [
+      0.8287939999999999,
+      1.228834
+     ],
+     "mib_per_s": [
+      2581.3450518869768,
+      4190.243118335389
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.228834,
+      "mib_per_s": 2581.3450518869768
+     },
+     {
+      "cpu_s": 0.8287939999999999,
+      "mib_per_s": 4190.243118335389
+     },
+     {
+      "cpu_s": 0.990297,
+      "mib_per_s": 3239.8793663190186
+     },
+     {
+      "cpu_s": 1.124276,
+      "mib_per_s": 2976.6411414795543
+     },
+     {
+      "cpu_s": 1.150025,
+      "mib_per_s": 2758.8315633834804
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 2147483648
+    },
+    "max_load": 1.875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tcp_bulk",
+   "params": {
+    "bytes": 2147483648,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 1.058262,
+     "mib_per_s": 3211.2939703643665
+    },
+    "spread": {
+     "cpu_s": [
+      0.944745,
+      1.3005090000000001
+     ],
+     "mib_per_s": [
+      2452.1994338884474,
+      3470.2762342763085
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 0.964439,
+      "mib_per_s": 3470.2762342763085
+     },
+     {
+      "cpu_s": 1.297727,
+      "mib_per_s": 2452.1994338884474
+     },
+     {
+      "cpu_s": 1.058262,
+      "mib_per_s": 3211.2939703643665
+     },
+     {
+      "cpu_s": 1.3005090000000001,
+      "mib_per_s": 2515.019260915195
+     },
+     {
+      "cpu_s": 0.944745,
+      "mib_per_s": 3318.362049298361
+     }
+    ],
+    "work": {
+     "bytes": 2147483648
+    },
+    "max_load": 1.875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 1.055929,
+     "mib_per_s": 1670.42315035268
+    },
+    "spread": {
+     "cpu_s": [
+      1.0468389999999999,
+      1.201341
+     ],
+     "mib_per_s": [
+      1435.624671811153,
+      1806.1925130395855
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.201341,
+      "mib_per_s": 1435.624671811153
+     },
+     {
+      "cpu_s": 1.055929,
+      "mib_per_s": 1670.42315035268
+     },
+     {
+      "cpu_s": 1.0468389999999999,
+      "mib_per_s": 1707.1442402678815
+     },
+     {
+      "cpu_s": 1.094994,
+      "mib_per_s": 1646.8193785649237
+     },
+     {
+      "cpu_s": 1.053637,
+      "mib_per_s": 1806.1925130395855
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "BoringSSL 269525e"
+    },
+    "max_load": 1.88525390625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 1.088056,
+     "mib_per_s": 1737.009866704577
+    },
+    "spread": {
+     "cpu_s": [
+      1.014203,
+      1.328897
+     ],
+     "mib_per_s": [
+      1298.3635888122226,
+      1887.849578328425
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.014203,
+      "mib_per_s": 1887.849578328425
+     },
+     {
+      "cpu_s": 1.088056,
+      "mib_per_s": 1658.9465009939438
+     },
+     {
+      "cpu_s": 1.030825,
+      "mib_per_s": 1757.1723420682113
+     },
+     {
+      "cpu_s": 1.091263,
+      "mib_per_s": 1737.009866704577
+     },
+     {
+      "cpu_s": 1.328897,
+      "mib_per_s": 1298.3635888122226
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "BoringSSL 269525e"
+    },
+    "max_load": 1.89453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 1.270922,
+     "mib_per_s": 1405.080343509432
+    },
+    "spread": {
+     "cpu_s": [
+      1.1559439999999999,
+      1.4571399999999999
+     ],
+     "mib_per_s": [
+      1207.617812605203,
+      1524.1802783941177
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.262406,
+      "mib_per_s": 1394.1284523952274
+     },
+     {
+      "cpu_s": 1.1559439999999999,
+      "mib_per_s": 1524.1802783941177
+     },
+     {
+      "cpu_s": 1.270922,
+      "mib_per_s": 1405.080343509432
+     },
+     {
+      "cpu_s": 1.4571399999999999,
+      "mib_per_s": 1207.617812605203
+     },
+     {
+      "cpu_s": 1.279712,
+      "mib_per_s": 1413.7117755080924
+     }
+    ],
+    "work": {
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.89453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 1.3661690000000002,
+     "mib_per_s": 1388.4118369994849
+    },
+    "spread": {
+     "cpu_s": [
+      1.2758969999999998,
+      1.501218
+     ],
+     "mib_per_s": [
+      1211.4871474541196,
+      1484.2068046916381
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.3661690000000002,
+      "mib_per_s": 1429.2076213624143
+     },
+     {
+      "cpu_s": 1.3027350000000002,
+      "mib_per_s": 1388.4118369994849
+     },
+     {
+      "cpu_s": 1.368282,
+      "mib_per_s": 1358.1883967477022
+     },
+     {
+      "cpu_s": 1.2758969999999998,
+      "mib_per_s": 1484.2068046916381
+     },
+     {
+      "cpu_s": 1.501218,
+      "mib_per_s": 1211.4871474541196
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.9033203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 1.3482049999999999,
+     "mib_per_s": 1380.4943828101486
+    },
+    "spread": {
+     "cpu_s": [
+      1.220192,
+      1.46009
+     ],
+     "mib_per_s": [
+      1209.8580500488124,
+      1531.547764611961
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.220192,
+      "mib_per_s": 1531.547764611961
+     },
+     {
+      "cpu_s": 1.272197,
+      "mib_per_s": 1508.9157084378996
+     },
+     {
+      "cpu_s": 1.3482049999999999,
+      "mib_per_s": 1380.4943828101486
+     },
+     {
+      "cpu_s": 1.46009,
+      "mib_per_s": 1209.8580500488124
+     },
+     {
+      "cpu_s": 1.3753980000000001,
+      "mib_per_s": 1350.2635353119945
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.9033203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 1.119751,
+     "mib_per_s": 1611.4321619548116
+    },
+    "spread": {
+     "cpu_s": [
+      1.049277,
+      1.179572
+     ],
+     "mib_per_s": [
+      1477.8017316514129,
+      1801.0295919837988
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.114876,
+      "mib_per_s": 1561.2628107140551
+     },
+     {
+      "cpu_s": 1.049277,
+      "mib_per_s": 1801.0295919837988
+     },
+     {
+      "cpu_s": 1.179572,
+      "mib_per_s": 1477.8017316514129
+     },
+     {
+      "cpu_s": 1.139073,
+      "mib_per_s": 1611.4321619548116
+     },
+     {
+      "cpu_s": 1.119751,
+      "mib_per_s": 1694.3692761581153
+     }
+    ],
+    "work": {
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "rustls 0.23.46 (aws-lc-rs)"
+    },
+    "max_load": 1.84423828125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_bulk",
+   "params": {
+    "bytes": 1073741824,
+    "chunk": 65536
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "openssl",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "openssl"
+    },
+    "only": [
+     "tls_bulk",
+     "tls_handshake"
+    ]
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 1.66695,
+     "mib_per_s": 1001.4276377831109
+    },
+    "spread": {
+     "cpu_s": [
+      1.476504,
+      1.817944
+     ],
+     "mib_per_s": [
+      933.9231546905606,
+      1254.596620256867
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 1.817944,
+      "mib_per_s": 933.9231546905606
+     },
+     {
+      "cpu_s": 1.476504,
+      "mib_per_s": 1254.596620256867
+     },
+     {
+      "cpu_s": 1.5937270000000001,
+      "mib_per_s": 1050.5402425254429
+     },
+     {
+      "cpu_s": 1.66695,
+      "mib_per_s": 1001.4276377831109
+     },
+     {
+      "cpu_s": 1.7258,
+      "mib_per_s": 969.6460614422932
+     }
+    ],
+    "work": {
+     "bytes": 1073741824,
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.85693359375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 4.261823,
+     "handshakes_per_s": 1189,
+     "p50_us": 716.27,
+     "p99_us": 1903.011
+    },
+    "spread": {
+     "cpu_s": [
+      4.176800999999999,
+      4.344659999999999
+     ],
+     "handshakes_per_s": [
+      1154.25,
+      1250
+     ],
+     "p50_us": [
+      690.183,
+      720.449
+     ],
+     "p99_us": [
+      1553.674,
+      2175.464
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.201957999999999,
+      "handshakes_per_s": 1203.75,
+      "p50_us": 700.762,
+      "p99_us": 2064.88
+     },
+     {
+      "cpu_s": 4.344659999999999,
+      "handshakes_per_s": 1250,
+      "p50_us": 690.183,
+      "p99_us": 1553.674
+     },
+     {
+      "cpu_s": 4.270646,
+      "handshakes_per_s": 1178,
+      "p50_us": 716.27,
+      "p99_us": 1903.011
+     },
+     {
+      "cpu_s": 4.261823,
+      "handshakes_per_s": 1189,
+      "p50_us": 717.352,
+      "p99_us": 1827.49
+     },
+     {
+      "cpu_s": 4.176800999999999,
+      "handshakes_per_s": 1154.25,
+      "p50_us": 720.449,
+      "p99_us": 2175.464
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 4815,
+     "tls_library": "BoringSSL 269525e"
+    },
+    "max_load": 1.85693359375
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "cpu_s": 4.239490999999999,
+     "handshakes_per_s": 1197.5,
+     "p50_us": 707.411,
+     "p99_us": 1859.402
+    },
+    "spread": {
+     "cpu_s": [
+      4.218885,
+      4.263749
+     ],
+     "handshakes_per_s": [
+      1174.25,
+      1236.75
+     ],
+     "p50_us": [
+      682.783,
+      729.22
+     ],
+     "p99_us": [
+      1738.825,
+      1969.953
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.218885,
+      "handshakes_per_s": 1174.25,
+      "p50_us": 729.22,
+      "p99_us": 1859.402
+     },
+     {
+      "cpu_s": 4.263749,
+      "handshakes_per_s": 1197.5,
+      "p50_us": 707.411,
+      "p99_us": 1842.705
+     },
+     {
+      "cpu_s": 4.227266,
+      "handshakes_per_s": 1223,
+      "p50_us": 688.228,
+      "p99_us": 1930.568
+     },
+     {
+      "cpu_s": 4.239490999999999,
+      "handshakes_per_s": 1177.75,
+      "p50_us": 728.644,
+      "p99_us": 1969.953
+     },
+     {
+      "cpu_s": 4.249565,
+      "handshakes_per_s": 1236.75,
+      "p50_us": 682.783,
+      "p99_us": 1738.825
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 4697,
+     "tls_library": "BoringSSL 269525e"
+    },
+    "max_load": 1.71826171875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "cpu_s": 4.170132,
+     "handshakes_per_s": 673.3899172465832,
+     "p50_us": 1293.682,
+     "p99_us": 2928.438
+    },
+    "spread": {
+     "cpu_s": [
+      4.059278,
+      4.2072330000000004
+     ],
+     "handshakes_per_s": [
+      662.9354864331377,
+      723.7832484310832
+     ],
+     "p50_us": [
+      1247.225,
+      1342.645
+     ],
+     "p99_us": [
+      2615.558,
+      3341.901
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.152620000000001,
+      "handshakes_per_s": 662.9354864331377,
+      "p50_us": 1342.645,
+      "p99_us": 2928.438
+     },
+     {
+      "cpu_s": 4.2072330000000004,
+      "handshakes_per_s": 723.7832484310832,
+      "p50_us": 1247.225,
+      "p99_us": 2615.558
+     },
+     {
+      "cpu_s": 4.170132,
+      "handshakes_per_s": 673.3899172465832,
+      "p50_us": 1313.661,
+      "p99_us": 2960.117
+     },
+     {
+      "cpu_s": 4.195377,
+      "handshakes_per_s": 714.2606089128242,
+      "p50_us": 1249.324,
+      "p99_us": 2722.662
+     },
+     {
+      "cpu_s": 4.059278,
+      "handshakes_per_s": 667.6919189822745,
+      "p50_us": 1293.682,
+      "p99_us": 3341.901
+     }
+    ],
+    "work": {
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 2652,
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.53515625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 3.9455340000000003,
+     "handshakes_per_s": 604.2365983343673,
+     "p50_us": 1331.612,
+     "p99_us": 2674.587
+    },
+    "spread": {
+     "cpu_s": [
+      3.76704,
+      3.9735190000000005
+     ],
+     "handshakes_per_s": [
+      531.7353840565646,
+      649.2385893071736
+     ],
+     "p50_us": [
+      1239.326,
+      1437.268
+     ],
+     "p99_us": [
+      2525.844,
+      3463.683
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 3.9735190000000005,
+      "handshakes_per_s": 649.2385893071736,
+      "p50_us": 1239.326,
+      "p99_us": 2693.088
+     },
+     {
+      "cpu_s": 3.942966,
+      "handshakes_per_s": 614.8642862324463,
+      "p50_us": 1296.872,
+      "p99_us": 2525.844
+     },
+     {
+      "cpu_s": 3.9455340000000003,
+      "handshakes_per_s": 586.7402737531671,
+      "p50_us": 1337.483,
+      "p99_us": 2674.587
+     },
+     {
+      "cpu_s": 3.76704,
+      "handshakes_per_s": 531.7353840565646,
+      "p50_us": 1437.268,
+      "p99_us": 3463.683
+     },
+     {
+      "cpu_s": 3.959048,
+      "handshakes_per_s": 604.2365983343673,
+      "p50_us": 1331.612,
+      "p99_us": 2564.424
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 2597,
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.419921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "cpu_s": 3.896913,
+     "handshakes_per_s": 586.4261041079334,
+     "p50_us": 1335.15,
+     "p99_us": 3104.726
+    },
+    "spread": {
+     "cpu_s": [
+      3.7885759999999995,
+      3.9669410000000003
+     ],
+     "handshakes_per_s": [
+      497.37263530241495,
+      631.6981251078906
+     ],
+     "p50_us": [
+      1269.447,
+      1615.205
+     ],
+     "p99_us": [
+      2407.063,
+      4156.201
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 3.876735,
+      "handshakes_per_s": 586.4261041079334,
+      "p50_us": 1335.15,
+      "p99_us": 3186.629
+     },
+     {
+      "cpu_s": 3.7885759999999995,
+      "handshakes_per_s": 497.37263530241495,
+      "p50_us": 1615.205,
+      "p99_us": 4156.201
+     },
+     {
+      "cpu_s": 3.902062,
+      "handshakes_per_s": 576.4890309990849,
+      "p50_us": 1372.04,
+      "p99_us": 2912.577
+     },
+     {
+      "cpu_s": 3.9669410000000003,
+      "handshakes_per_s": 631.6981251078906,
+      "p50_us": 1269.447,
+      "p99_us": 2407.063
+     },
+     {
+      "cpu_s": 3.896913,
+      "handshakes_per_s": 592.6379820873373,
+      "p50_us": 1323.083,
+      "p99_us": 3104.726
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 2347,
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.275390625
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 4.271202000000001,
+     "handshakes_per_s": 1610.1705306218118,
+     "p50_us": 564.059,
+     "p99_us": 1269.795
+    },
+    "spread": {
+     "cpu_s": [
+      4.239529000000001,
+      4.299226
+     ],
+     "handshakes_per_s": [
+      1568.8197464780692,
+      1688.6205536018358
+     ],
+     "p50_us": [
+      524.691,
+      585.864
+     ],
+     "p99_us": [
+      1212.944,
+      1328.479
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.299226,
+      "handshakes_per_s": 1688.6205536018358,
+      "p50_us": 524.991,
+      "p99_us": 1212.944
+     },
+     {
+      "cpu_s": 4.271202000000001,
+      "handshakes_per_s": 1677.6988427955894,
+      "p50_us": 524.691,
+      "p99_us": 1224.014
+     },
+     {
+      "cpu_s": 4.239529000000001,
+      "handshakes_per_s": 1581.0744904545752,
+      "p50_us": 573.444,
+      "p99_us": 1328.479
+     },
+     {
+      "cpu_s": 4.276139000000001,
+      "handshakes_per_s": 1610.1705306218118,
+      "p50_us": 564.059,
+      "p99_us": 1294.379
+     },
+     {
+      "cpu_s": 4.246431,
+      "handshakes_per_s": 1568.8197464780692,
+      "p50_us": 585.864,
+      "p99_us": 1269.795
+     }
+    ],
+    "work": {
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 6757,
+     "tls_library": "rustls 0.23.46 (aws-lc-rs)"
+    },
+    "max_load": 1.30078125
+   },
+   "problems": []
+  },
+  {
+   "workload": "tls_handshake",
+   "params": {
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "openssl",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "openssl"
+    },
+    "only": [
+     "tls_bulk",
+     "tls_handshake"
+    ]
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "cpu_s": 4.2766910000000005,
+     "handshakes_per_s": 680.5254012680105,
+     "p50_us": 1287.871,
+     "p99_us": 3108.723
+    },
+    "spread": {
+     "cpu_s": [
+      4.181028,
+      4.338734
+     ],
+     "handshakes_per_s": [
+      665.7301311459795,
+      746.4222001069678
+     ],
+     "p50_us": [
+      1173.822,
+      1337.957
+     ],
+     "p99_us": [
+      2446.56,
+      3242.219
+     ]
+    },
+    "samples": [
+     {
+      "cpu_s": 4.181028,
+      "handshakes_per_s": 669.0582915496954,
+      "p50_us": 1287.871,
+      "p99_us": 3242.219
+     },
+     {
+      "cpu_s": 4.292807,
+      "handshakes_per_s": 680.5254012680105,
+      "p50_us": 1335.098,
+      "p99_us": 2869.419
+     },
+     {
+      "cpu_s": 4.2766910000000005,
+      "handshakes_per_s": 665.7301311459795,
+      "p50_us": 1337.957,
+      "p99_us": 3218.575
+     },
+     {
+      "cpu_s": 4.256174000000001,
+      "handshakes_per_s": 717.8355985993253,
+      "p50_us": 1224.774,
+      "p99_us": 3108.723
+     },
+     {
+      "cpu_s": 4.338734,
+      "handshakes_per_s": 746.4222001069678,
+      "p50_us": 1173.822,
+      "p99_us": 2446.56
+     }
+    ],
+    "work": {
+     "cipher": "TLS_AES_128_GCM_SHA256",
+     "group": "X25519",
+     "handshakes": 2677,
+     "tls_library": "OpenSSL 3.0.13 30 Jan 2024"
+    },
+    "max_load": 1.2333984375
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 230288.80439879376,
+     "sent_per_s": 230288.80439879376
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0.4009252120277564
+     ],
+     "received_per_s": [
+      216964.0227812224,
+      232525.64872311227
+     ],
+     "sent_per_s": [
+      216964.0227812224,
+      233461.65535986732
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 216964.0227812224,
+      "sent_per_s": 216964.0227812224
+     },
+     {
+      "loss_pct": 0.4009252120277564,
+      "received_per_s": 232525.64872311227,
+      "sent_per_s": 233461.65535986732
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 230738.5863488144,
+      "sent_per_s": 230738.5863488144
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 230288.80439879376,
+      "sent_per_s": 230288.80439879376
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 219501.4500814546,
+      "sent_per_s": 219501.4500814546
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "received": 867856,
+     "sent": 867856
+    },
+    "max_load": 1.42138671875
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 262670.54258518456,
+     "sent_per_s": 262670.54258518456
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0.3585221999341337
+     ],
+     "received_per_s": [
+      237246.8722231498,
+      268996.21600396145
+     ],
+     "sent_per_s": [
+      237246.8722231498,
+      268996.21600396145
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 262670.54258518456,
+      "sent_per_s": 262670.54258518456
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 268996.21600396145,
+      "sent_per_s": 268996.21600396145
+     },
+     {
+      "loss_pct": 0.3585221999341337,
+      "received_per_s": 266249.20724298543,
+      "sent_per_s": 267207.2043905489
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 248288.1341974644,
+      "sent_per_s": 248288.1341974644
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 237246.8722231498,
+      "sent_per_s": 237246.8722231498
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "received": 1050672,
+     "sent": 1050672
+    },
+    "max_load": 1.69970703125
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 182682.15135373478,
+     "sent_per_s": 182870.9022850319
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0.10321539891726363
+     ],
+     "received_per_s": [
+      160549.0825724442,
+      197564.51744866613
+     ],
+     "sent_per_s": [
+      160549.0825724442,
+      197564.51744866613
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0.10321539891726363,
+      "received_per_s": 182682.15135373478,
+      "sent_per_s": 182870.9022850319
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 197564.51744866613,
+      "sent_per_s": 197564.51744866613
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 179257.25219938444,
+      "sent_per_s": 179257.25219938444
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 194923.3431896518,
+      "sent_per_s": 194923.3431896518
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 160549.0825724442,
+      "sent_per_s": 160549.0825724442
+     }
+    ],
+    "work": {
+     "received": 730725,
+     "sent": 731480
+    },
+    "max_load": 1.74658203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 151579.24874985177,
+     "sent_per_s": 151579.24874985177
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0
+     ],
+     "received_per_s": [
+      149302.40000381193,
+      171068.40318163973
+     ],
+     "sent_per_s": [
+      149302.40000381193,
+      171068.40318163973
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 149302.40000381193,
+      "sent_per_s": 149302.40000381193
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 149783.14416133045,
+      "sent_per_s": 149783.14416133045
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 171068.40318163973,
+      "sent_per_s": 171068.40318163973
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 151579.24874985177,
+      "sent_per_s": 151579.24874985177
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 154072.18300060715,
+      "sent_per_s": 154072.18300060715
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "received": 597221,
+     "sent": 597221
+    },
+    "max_load": 1.763671875
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 168425.0710848554,
+     "sent_per_s": 168425.0710848554
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0
+     ],
+     "received_per_s": [
+      152686.48801991742,
+      183378.36931863442
+     ],
+     "sent_per_s": [
+      152686.48801991742,
+      183378.36931863442
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 168550.32316577583,
+      "sent_per_s": 168550.32316577583
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 183378.36931863442,
+      "sent_per_s": 183378.36931863442
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 163029.97242406502,
+      "sent_per_s": 163029.97242406502
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 168425.0710848554,
+      "sent_per_s": 168425.0710848554
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 152686.48801991742,
+      "sent_per_s": 152686.48801991742
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "received": 674213,
+     "sent": 674213
+    },
+    "max_load": 1.78271484375
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 0
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 189985.58903634828,
+     "sent_per_s": 189985.58903634828
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0
+     ],
+     "received_per_s": [
+      181441.88296312335,
+      192095.18733922302
+     ],
+     "sent_per_s": [
+      181441.88296312335,
+      192095.18733922302
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 189120.38302363714,
+      "sent_per_s": 189120.38302363714
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 192095.18733922302,
+      "sent_per_s": 192095.18733922302
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 181441.88296312335,
+      "sent_per_s": 181441.88296312335
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 191972.60631522938,
+      "sent_per_s": 191972.60631522938
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 189985.58903634828,
+      "sent_per_s": 189985.58903634828
+     }
+    ],
+    "work": {
+     "received": 756736,
+     "sent": 756736
+    },
+    "max_load": 1.7783203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "loss_pct": 1.2635150140212148,
+     "received_per_s": 906999.0024564719,
+     "sent_per_s": 918605.7236950167
+    },
+    "spread": {
+     "loss_pct": [
+      0.5461844467682109,
+      1.5105452771861039
+     ],
+     "received_per_s": [
+      806514.1412834518,
+      936000.8935884663
+     ],
+     "sent_per_s": [
+      810943.3879404779,
+      948486.3721602638
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 1.5105452771861039,
+      "received_per_s": 835991.7894671656,
+      "sent_per_s": 848813.501729661
+     },
+     {
+      "loss_pct": 1.3163582459662115,
+      "received_per_s": 936000.8935884663,
+      "sent_per_s": 948486.3721602638
+     },
+     {
+      "loss_pct": 0.5461844467682109,
+      "received_per_s": 806514.1412834518,
+      "sent_per_s": 810943.3879404779
+     },
+     {
+      "loss_pct": 0.6642079867033311,
+      "received_per_s": 913226.6003747813,
+      "sent_per_s": 919332.8828067738
+     },
+     {
+      "loss_pct": 1.2635150140212148,
+      "received_per_s": 906999.0024564719,
+      "sent_per_s": 918605.7236950167
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "received": 3343977,
+     "sent": 3395264
+    },
+    "max_load": 1.79736328125
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "loss_pct": 1.297127519953607,
+     "received_per_s": 971453.0888842664,
+     "sent_per_s": 977891.3610126078
+    },
+    "spread": {
+     "loss_pct": [
+      0.6583831686246278,
+      2.3137224116274897
+     ],
+     "received_per_s": [
+      839552.3211979895,
+      1088823.9557589458
+     ],
+     "sent_per_s": [
+      848712.7428695139,
+      1114613.0066978284
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 1.297127519953607,
+      "received_per_s": 1034834.8982298766,
+      "sent_per_s": 1048434.4297467909
+     },
+     {
+      "loss_pct": 2.070369903850191,
+      "received_per_s": 932949.7639305404,
+      "sent_per_s": 952673.6320912747
+     },
+     {
+      "loss_pct": 2.3137224116274897,
+      "received_per_s": 1088823.9557589458,
+      "sent_per_s": 1114613.0066978284
+     },
+     {
+      "loss_pct": 1.0793312282024696,
+      "received_per_s": 839552.3211979895,
+      "sent_per_s": 848712.7428695139
+     },
+     {
+      "loss_pct": 0.6583831686246278,
+      "received_per_s": 971453.0888842664,
+      "sent_per_s": 977891.3610126078
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "received": 4139330,
+     "sent": 4193728
+    },
+    "max_load": 1.79736328125
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "loss_pct": 0,
+     "received_per_s": 203375.35235119046,
+     "sent_per_s": 203375.35235119046
+    },
+    "spread": {
+     "loss_pct": [
+      0,
+      0
+     ],
+     "received_per_s": [
+      199726.40647414568,
+      246528.45718702386
+     ],
+     "sent_per_s": [
+      199726.40647414568,
+      246528.45718702386
+     ]
+    },
+    "samples": [
+     {
+      "loss_pct": 0,
+      "received_per_s": 246528.45718702386,
+      "sent_per_s": 246528.45718702386
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 201691.07846135332,
+      "sent_per_s": 201691.07846135332
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 199726.40647414568,
+      "sent_per_s": 199726.40647414568
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 219511.66535446615,
+      "sent_per_s": 219511.66535446615
+     },
+     {
+      "loss_pct": 0,
+      "received_per_s": 203375.35235119046,
+      "sent_per_s": 203375.35235119046
+     }
+    ],
+    "work": {
+     "received": 986112,
+     "sent": 986112
+    },
+    "max_load": 1.8115234375
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "unsupported",
+    "error": "unsupported: Asio has no batch datagram API (no sendmmsg, recvmmsg, GSO or GRO); async_send_to and async_receive_from carry one datagram per call",
+    "runs": 1
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "unsupported",
+    "error": "unsupported: Asio has no batch datagram API (no sendmmsg, recvmmsg, GSO or GRO); async_send_to and async_receive_from carry one datagram per call",
+    "runs": 1
+   },
+   "problems": []
+  },
+  {
+   "workload": "udp_flood",
+   "params": {
+    "size": 1200,
+    "seconds": 5,
+    "batch": 32
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "unsupported",
+    "error": "unsupported: tokio::net::UdpSocket has no batch datagram API (no sendmmsg, recvmmsg, GSO or GRO); it moves one datagram per call",
+    "runs": 1
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "read_mib_per_s": 1072.2517063634598,
+     "write_mib_per_s": 422.26994380264165
+    },
+    "spread": {
+     "read_mib_per_s": [
+      997.0324458699498,
+      1109.6978093249645
+     ],
+     "write_mib_per_s": [
+      408.7882257251104,
+      438.44636984418895
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 997.0324458699498,
+      "write_mib_per_s": 408.7882257251104
+     },
+     {
+      "read_mib_per_s": 1086.652725435717,
+      "write_mib_per_s": 422.26994380264165
+     },
+     {
+      "read_mib_per_s": 1000.1266508040198,
+      "write_mib_per_s": 420.0623132577913
+     },
+     {
+      "read_mib_per_s": 1072.2517063634598,
+      "write_mib_per_s": 437.81963591172195
+     },
+     {
+      "read_mib_per_s": 1109.6978093249645,
+      "write_mib_per_s": 438.44636984418895
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.68017578125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "read_mib_per_s": 5876.862153216637,
+     "write_mib_per_s": 502.7884549510716
+    },
+    "spread": {
+     "read_mib_per_s": [
+      5680.777685150774,
+      6012.940905791532
+     ],
+     "write_mib_per_s": [
+      456.59450345115886,
+      547.0661175348047
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 5876.862153216637,
+      "write_mib_per_s": 547.0661175348047
+     },
+     {
+      "read_mib_per_s": 6012.940905791532,
+      "write_mib_per_s": 523.9939227389526
+     },
+     {
+      "read_mib_per_s": 5680.777685150774,
+      "write_mib_per_s": 476.71735172725386
+     },
+     {
+      "read_mib_per_s": 5898.459381163825,
+      "write_mib_per_s": 456.59450345115886
+     },
+     {
+      "read_mib_per_s": 5749.0039233134075,
+      "write_mib_per_s": 502.7884549510716
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.62548828125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "read_mib_per_s": 952.4883553647735,
+     "write_mib_per_s": 439.32657434775876
+    },
+    "spread": {
+     "read_mib_per_s": [
+      863.6343973806711,
+      1006.5639984625599
+     ],
+     "write_mib_per_s": [
+      397.0242086426237,
+      450.8455741707795
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 952.4883553647735,
+      "write_mib_per_s": 429.63493603133134
+     },
+     {
+      "read_mib_per_s": 863.6343973806711,
+      "write_mib_per_s": 439.32657434775876
+     },
+     {
+      "read_mib_per_s": 959.8758796498472,
+      "write_mib_per_s": 450.8455741707795
+     },
+     {
+      "read_mib_per_s": 1006.5639984625599,
+      "write_mib_per_s": 447.15079239884494
+     },
+     {
+      "read_mib_per_s": 922.659975584579,
+      "write_mib_per_s": 397.0242086426237
+     }
+    ],
+    "work": {
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.52880859375
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv",
+    "env": {
+     "UV_USE_IO_URING": "1"
+    },
+    "only": [
+     "file_seq",
+     "file_rand"
+    ]
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "read_mib_per_s": 1902.9606406599469,
+     "write_mib_per_s": 458.6202675286984
+    },
+    "spread": {
+     "read_mib_per_s": [
+      1793.341013783241,
+      2122.9326968471514
+     ],
+     "write_mib_per_s": [
+      452.5612630878077,
+      499.18314771420853
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 1793.341013783241,
+      "write_mib_per_s": 472.8254842556017
+     },
+     {
+      "read_mib_per_s": 2022.0157309743456,
+      "write_mib_per_s": 454.1494393791718
+     },
+     {
+      "read_mib_per_s": 1889.422514208854,
+      "write_mib_per_s": 452.5612630878077
+     },
+     {
+      "read_mib_per_s": 2122.9326968471514,
+      "write_mib_per_s": 458.6202675286984
+     },
+     {
+      "read_mib_per_s": 1902.9606406599469,
+      "write_mib_per_s": 499.18314771420853
+     }
+    ],
+    "work": {
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.447265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "read_mib_per_s": 5254.808270160942,
+     "write_mib_per_s": 474.2814584724356
+    },
+    "spread": {
+     "read_mib_per_s": [
+      4688.538080219293,
+      5513.131719829193
+     ],
+     "write_mib_per_s": [
+      465.4413768486088,
+      515.243936148206
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 5513.131719829193,
+      "write_mib_per_s": 465.4413768486088
+     },
+     {
+      "read_mib_per_s": 5242.287951935264,
+      "write_mib_per_s": 467.48029310802553
+     },
+     {
+      "read_mib_per_s": 5254.808270160942,
+      "write_mib_per_s": 515.243936148206
+     },
+     {
+      "read_mib_per_s": 4688.538080219293,
+      "write_mib_per_s": 474.2814584724356
+     },
+     {
+      "read_mib_per_s": 5298.362211045875,
+      "write_mib_per_s": 487.7645886751673
+     }
+    ],
+    "work": {
+     "backend": "io_uring via epoll",
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.4111328125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "read_mib_per_s": 5612.158768278469,
+     "write_mib_per_s": 496.3238662900208
+    },
+    "spread": {
+     "read_mib_per_s": [
+      5301.595332873088,
+      6275.932271658877
+     ],
+     "write_mib_per_s": [
+      488.07458529315335,
+      512.7688250655502
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 5301.595332873088,
+      "write_mib_per_s": 495.0379719021378
+     },
+     {
+      "read_mib_per_s": 5382.079952731882,
+      "write_mib_per_s": 512.7688250655502
+     },
+     {
+      "read_mib_per_s": 5847.701079683207,
+      "write_mib_per_s": 508.3898252234621
+     },
+     {
+      "read_mib_per_s": 5612.158768278469,
+      "write_mib_per_s": 488.07458529315335
+     },
+     {
+      "read_mib_per_s": 6275.932271658877,
+      "write_mib_per_s": 496.3238662900208
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.34765625
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_seq",
+   "params": {
+    "bytes": 536870912,
+    "block": 65536
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "read_mib_per_s": 1006.7295287591687,
+     "write_mib_per_s": 475.88680932973074
+    },
+    "spread": {
+     "read_mib_per_s": [
+      905.752042028593,
+      1050.4621758648157
+     ],
+     "write_mib_per_s": [
+      454.9867027825632,
+      495.1236997807466
+     ]
+    },
+    "samples": [
+     {
+      "read_mib_per_s": 962.5617763500045,
+      "write_mib_per_s": 460.905526486545
+     },
+     {
+      "read_mib_per_s": 1025.7916764642796,
+      "write_mib_per_s": 475.88680932973074
+     },
+     {
+      "read_mib_per_s": 1050.4621758648157,
+      "write_mib_per_s": 495.1236997807466
+     },
+     {
+      "read_mib_per_s": 905.752042028593,
+      "write_mib_per_s": 454.9867027825632
+     },
+     {
+      "read_mib_per_s": 1006.7295287591687,
+      "write_mib_per_s": 477.1010047325038
+     }
+    ],
+    "work": {
+     "blocking_threads": 4,
+     "read": 536870912,
+     "written": 536870912
+    },
+    "max_load": 1.3193359375
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "iops": 19468.75,
+     "p50_us": 45.424,
+     "p99_us": 141.34
+    },
+    "spread": {
+     "iops": [
+      17087,
+      20142
+     ],
+     "p50_us": [
+      43.545,
+      46.06
+     ],
+     "p99_us": [
+      125.41,
+      195.908
+     ]
+    },
+    "samples": [
+     {
+      "iops": 19809.75,
+      "p50_us": 43.545,
+      "p99_us": 141.34
+     },
+     {
+      "iops": 20142,
+      "p50_us": 44.564,
+      "p99_us": 125.41
+     },
+     {
+      "iops": 17087,
+      "p50_us": 46.06,
+      "p99_us": 195.908
+     },
+     {
+      "iops": 19468.75,
+      "p50_us": 45.424,
+      "p99_us": 133.88
+     },
+     {
+      "iops": 18370.75,
+      "p50_us": 45.643,
+      "p99_us": 157.829
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "reads": 79239
+    },
+    "max_load": 1.26953125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "iops": 528542.25,
+     "p50_us": 1.693,
+     "p99_us": 3.259
+    },
+    "spread": {
+     "iops": [
+      505263,
+      562257.75
+     ],
+     "p50_us": [
+      1.582,
+      1.78
+     ],
+     "p99_us": [
+      2.925,
+      3.664
+     ]
+    },
+    "samples": [
+     {
+      "iops": 528542.25,
+      "p50_us": 1.696,
+      "p99_us": 3.146
+     },
+     {
+      "iops": 545593.25,
+      "p50_us": 1.693,
+      "p99_us": 2.925
+     },
+     {
+      "iops": 505263,
+      "p50_us": 1.78,
+      "p99_us": 3.664
+     },
+     {
+      "iops": 521339.25,
+      "p50_us": 1.688,
+      "p99_us": 3.259
+     },
+     {
+      "iops": 562257.75,
+      "p50_us": 1.582,
+      "p99_us": 3.276
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "reads": 2114169
+    },
+    "max_load": 1.24267578125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "iops": 19487.8030847756,
+     "p50_us": 44.022,
+     "p99_us": 130.565
+    },
+    "spread": {
+     "iops": [
+      18984.791277682438,
+      20472.398369896393
+     ],
+     "p50_us": [
+      43.243,
+      45.94
+     ],
+     "p99_us": [
+      125.098,
+      144.517
+     ]
+    },
+    "samples": [
+     {
+      "iops": 19487.8030847756,
+      "p50_us": 44.699,
+      "p99_us": 130.565
+     },
+     {
+      "iops": 18984.791277682438,
+      "p50_us": 45.94,
+      "p99_us": 133.447
+     },
+     {
+      "iops": 20125.29240902243,
+      "p50_us": 43.381,
+      "p99_us": 125.098
+     },
+     {
+      "iops": 20472.398369896393,
+      "p50_us": 43.243,
+      "p99_us": 128.184
+     },
+     {
+      "iops": 19254.309112779454,
+      "p50_us": 44.022,
+      "p99_us": 144.517
+     }
+    ],
+    "work": {
+     "reads": 77951
+    },
+    "max_load": 1.330078125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv",
+    "env": {
+     "UV_USE_IO_URING": "1"
+    },
+    "only": [
+     "file_seq",
+     "file_rand"
+    ]
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "iops": 37483.46718322448,
+     "p50_us": 23.155,
+     "p99_us": 75.105
+    },
+    "spread": {
+     "iops": [
+      34913.74505970508,
+      41481.807089337
+     ],
+     "p50_us": [
+      21.735,
+      24.283
+     ],
+     "p99_us": [
+      66.48,
+      76.037
+     ]
+    },
+    "samples": [
+     {
+      "iops": 41481.807089337,
+      "p50_us": 21.735,
+      "p99_us": 66.48
+     },
+     {
+      "iops": 35996.28581310034,
+      "p50_us": 24.283,
+      "p99_us": 75.893
+     },
+     {
+      "iops": 34913.74505970508,
+      "p50_us": 24.258,
+      "p99_us": 75.105
+     },
+     {
+      "iops": 37483.46718322448,
+      "p50_us": 23.155,
+      "p99_us": 76.037
+     },
+     {
+      "iops": 37920.858747542676,
+      "p50_us": 22.748,
+      "p99_us": 74.282
+     }
+    ],
+    "work": {
+     "reads": 165927
+    },
+    "max_load": 1.5419921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "iops": 279361.06926470564,
+     "p50_us": 2.962,
+     "p99_us": 7.676
+    },
+    "spread": {
+     "iops": [
+      255580.4479006131,
+      307227.8846487474
+     ],
+     "p50_us": [
+      2.754,
+      3.44
+     ],
+     "p99_us": [
+      6.641,
+      9.562
+     ]
+    },
+    "samples": [
+     {
+      "iops": 263211.7544820976,
+      "p50_us": 3.157,
+      "p99_us": 9.562
+     },
+     {
+      "iops": 255580.4479006131,
+      "p50_us": 3.44,
+      "p99_us": 8.989
+     },
+     {
+      "iops": 279361.06926470564,
+      "p50_us": 2.962,
+      "p99_us": 7.676
+     },
+     {
+      "iops": 300019.59740274097,
+      "p50_us": 2.767,
+      "p99_us": 6.641
+     },
+     {
+      "iops": 307227.8846487474,
+      "p50_us": 2.754,
+      "p99_us": 7.593
+     }
+    ],
+    "work": {
+     "backend": "io_uring via epoll",
+     "reads": 1052861
+    },
+    "max_load": 1.5419921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "iops": 452957.91798802494,
+     "p50_us": 1.877,
+     "p99_us": 4.098
+    },
+    "spread": {
+     "iops": [
+      437285.1205744649,
+      462176.2887007396
+     ],
+     "p50_us": [
+      1.815,
+      1.937
+     ],
+     "p99_us": [
+      4.024,
+      4.421
+     ]
+    },
+    "samples": [
+     {
+      "iops": 437285.1205744649,
+      "p50_us": 1.937,
+      "p99_us": 4.098
+     },
+     {
+      "iops": 443000.094702186,
+      "p50_us": 1.913,
+      "p99_us": 4.201
+     },
+     {
+      "iops": 452957.91798802494,
+      "p50_us": 1.877,
+      "p99_us": 4.084
+     },
+     {
+      "iops": 457567.1942599443,
+      "p50_us": 1.844,
+      "p99_us": 4.421
+     },
+     {
+      "iops": 462176.2887007396,
+      "p50_us": 1.815,
+      "p99_us": 4.024
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "reads": 1749165
+    },
+    "max_load": 1.35595703125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 1,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "iops": 20476.96785351886,
+     "p50_us": 43.661,
+     "p99_us": 137.998
+    },
+    "spread": {
+     "iops": [
+      19408.640280264546,
+      21888.892788001172
+     ],
+     "p50_us": [
+      40.809,
+      44.89
+     ],
+     "p99_us": [
+      120.75,
+      154.965
+     ]
+    },
+    "samples": [
+     {
+      "iops": 21888.892788001172,
+      "p50_us": 40.809,
+      "p99_us": 120.75
+     },
+     {
+      "iops": 21096.131835811117,
+      "p50_us": 41.849,
+      "p99_us": 134.72
+     },
+     {
+      "iops": 20476.96785351886,
+      "p50_us": 43.661,
+      "p99_us": 137.998
+     },
+     {
+      "iops": 19737.226081538898,
+      "p50_us": 44.89,
+      "p99_us": 154.965
+     },
+     {
+      "iops": 19408.640280264546,
+      "p50_us": 44.54,
+      "p99_us": 154.069
+     }
+    ],
+    "work": {
+     "blocking_threads": 4,
+     "reads": 87578
+    },
+    "max_load": 1.41064453125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "iops": 44353.75,
+     "p50_us": 716.561,
+     "p99_us": 1297.552
+    },
+    "spread": {
+     "iops": [
+      43963,
+      44671
+     ],
+     "p50_us": [
+      706.369,
+      727.599
+     ],
+     "p99_us": [
+      1194.432,
+      1421.374
+     ]
+    },
+    "samples": [
+     {
+      "iops": 44671,
+      "p50_us": 716.561,
+      "p99_us": 1194.432
+     },
+     {
+      "iops": 44051.5,
+      "p50_us": 727.599,
+      "p99_us": 1285.351
+     },
+     {
+      "iops": 43963,
+      "p50_us": 720.629,
+      "p99_us": 1356.782
+     },
+     {
+      "iops": 44499,
+      "p50_us": 711.164,
+      "p99_us": 1297.552
+     },
+     {
+      "iops": 44353.75,
+      "p50_us": 706.369,
+      "p99_us": 1421.374
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "reads": 178684
+    },
+    "max_load": 1.58984375
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "iops": 805712,
+     "p50_us": 34.836,
+     "p99_us": 96.006
+    },
+    "spread": {
+     "iops": [
+      749232,
+      833656
+     ],
+     "p50_us": [
+      34.378,
+      39.087
+     ],
+     "p99_us": [
+      88.22,
+      97.196
+     ]
+    },
+    "samples": [
+     {
+      "iops": 814464,
+      "p50_us": 34.836,
+      "p99_us": 96.006
+     },
+     {
+      "iops": 833656,
+      "p50_us": 34.397,
+      "p99_us": 88.22
+     },
+     {
+      "iops": 769847,
+      "p50_us": 36.122,
+      "p99_us": 97.196
+     },
+     {
+      "iops": 749232,
+      "p50_us": 39.087,
+      "p99_us": 95.223
+     },
+     {
+      "iops": 805712,
+      "p50_us": 34.378,
+      "p99_us": 96.745
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "reads": 3257856
+    },
+    "max_load": 1.54248046875
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "iops": 79389.01716389,
+     "p50_us": 311.276,
+     "p99_us": 1241.532
+    },
+    "spread": {
+     "iops": [
+      74841.34613705955,
+      85365.24389255368
+     ],
+     "p50_us": [
+      273.477,
+      348.085
+     ],
+     "p99_us": [
+      1205.137,
+      1271.216
+     ]
+    },
+    "samples": [
+     {
+      "iops": 82359.24631293154,
+      "p50_us": 296.869,
+      "p99_us": 1205.137
+     },
+     {
+      "iops": 78048.3991529337,
+      "p50_us": 314.777,
+      "p99_us": 1271.216
+     },
+     {
+      "iops": 79389.01716389,
+      "p50_us": 311.276,
+      "p99_us": 1264.299
+     },
+     {
+      "iops": 74841.34613705955,
+      "p50_us": 348.085,
+      "p99_us": 1240.382
+     },
+     {
+      "iops": 85365.24389255368,
+      "p50_us": 273.477,
+      "p99_us": 1241.532
+     }
+    ],
+    "work": {
+     "reads": 329438
+    },
+    "max_load": 1.73095703125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv",
+    "env": {
+     "UV_USE_IO_URING": "1"
+    },
+    "only": [
+     "file_seq",
+     "file_rand"
+    ]
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "iops": 460327.5009276739,
+     "p50_us": 68.409,
+     "p99_us": 144.65
+    },
+    "spread": {
+     "iops": [
+      448294.79795075685,
+      493346.4481953103
+     ],
+     "p50_us": [
+      63.354,
+      70.81
+     ],
+     "p99_us": [
+      136.948,
+      151.958
+     ]
+    },
+    "samples": [
+     {
+      "iops": 448294.79795075685,
+      "p50_us": 70.81,
+      "p99_us": 144.65
+     },
+     {
+      "iops": 455051.7124343718,
+      "p50_us": 68.409,
+      "p99_us": 151.958
+     },
+     {
+      "iops": 468506.7283039523,
+      "p50_us": 66.285,
+      "p99_us": 142.001
+     },
+     {
+      "iops": 493346.4481953103,
+      "p50_us": 63.354,
+      "p99_us": 136.948
+     },
+     {
+      "iops": 460327.5009276739,
+      "p50_us": 68.76,
+      "p99_us": 145.668
+     }
+    ],
+    "work": {
+     "reads": 1793241
+    },
+    "max_load": 1.76123046875
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "iops": 287925.375082716,
+     "p50_us": 94.662,
+     "p99_us": 208.136
+    },
+    "spread": {
+     "iops": [
+      261452.73759274033,
+      301868.01131139323
+     ],
+     "p50_us": [
+      91.272,
+      119.965
+     ],
+     "p99_us": [
+      190.589,
+      270.409
+     ]
+    },
+    "samples": [
+     {
+      "iops": 261452.73759274033,
+      "p50_us": 119.965,
+      "p99_us": 270.409
+     },
+     {
+      "iops": 297631.95644515177,
+      "p50_us": 93.373,
+      "p99_us": 190.589
+     },
+     {
+      "iops": 301868.01131139323,
+      "p50_us": 91.272,
+      "p99_us": 194.416
+     },
+     {
+      "iops": 282018.42526611657,
+      "p50_us": 96.828,
+      "p99_us": 232.017
+     },
+     {
+      "iops": 287925.375082716,
+      "p50_us": 94.662,
+      "p99_us": 208.136
+     }
+    ],
+    "work": {
+     "backend": "io_uring via epoll",
+     "reads": 1045824
+    },
+    "max_load": 1.76123046875
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "iops": 455605.9662549654,
+     "p50_us": 60.246,
+     "p99_us": 140.75
+    },
+    "spread": {
+     "iops": [
+      405409.81594308856,
+      474714.6527853754
+     ],
+     "p50_us": [
+      58.438,
+      66.486
+     ],
+     "p99_us": [
+      137.615,
+      179.274
+     ]
+    },
+    "samples": [
+     {
+      "iops": 405409.81594308856,
+      "p50_us": 66.486,
+      "p99_us": 179.274
+     },
+     {
+      "iops": 455605.9662549654,
+      "p50_us": 60.246,
+      "p99_us": 140.75
+     },
+     {
+      "iops": 439129.5827465152,
+      "p50_us": 61.662,
+      "p99_us": 155.834
+     },
+     {
+      "iops": 466469.8797097987,
+      "p50_us": 59.391,
+      "p99_us": 140.268
+     },
+     {
+      "iops": 474714.6527853754,
+      "p50_us": 58.438,
+      "p99_us": 137.615
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "reads": 1621690
+    },
+    "max_load": 1.50048828125
+   },
+   "problems": []
+  },
+  {
+   "workload": "file_rand",
+   "params": {
+    "file_bytes": 268435456,
+    "block": 4096,
+    "depth": 32,
+    "seconds": 5
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "iops": 247182.53386408623,
+     "p50_us": 52.734,
+     "p99_us": 977.648
+    },
+    "spread": {
+     "iops": [
+      229651.36758064857,
+      276921.0842035438
+     ],
+     "p50_us": [
+      47.886,
+      54.128
+     ],
+     "p99_us": [
+      940.313,
+      998.877
+     ]
+    },
+    "samples": [
+     {
+      "iops": 256455.36197326926,
+      "p50_us": 52.422,
+      "p99_us": 978.702
+     },
+     {
+      "iops": 229651.36758064857,
+      "p50_us": 54.047,
+      "p99_us": 998.877
+     },
+     {
+      "iops": 234796.2322879679,
+      "p50_us": 52.734,
+      "p99_us": 977.648
+     },
+     {
+      "iops": 276921.0842035438,
+      "p50_us": 47.886,
+      "p99_us": 956.055
+     },
+     {
+      "iops": 247182.53386408623,
+      "p50_us": 54.128,
+      "p99_us": 940.313
+     }
+    ],
+    "work": {
+     "blocking_threads": 4,
+     "reads": 1026125
+    },
+    "max_load": 2.02001953125
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 2274.623,
+     "p50_late_us": 123.924,
+     "p99_late_us": 414.692
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      1847.264,
+      3518.244
+     ],
+     "p50_late_us": [
+      115.997,
+      129.246
+     ],
+     "p99_late_us": [
+      268.863,
+      783.355
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 3518.244,
+      "p50_late_us": 129.246,
+      "p99_late_us": 783.355
+     },
+     {
+      "early": 0,
+      "max_late_us": 1847.264,
+      "p50_late_us": 115.997,
+      "p99_late_us": 303.918
+     },
+     {
+      "early": 0,
+      "max_late_us": 2274.623,
+      "p50_late_us": 117.978,
+      "p99_late_us": 268.863
+     },
+     {
+      "early": 0,
+      "max_late_us": 1862.35,
+      "p50_late_us": 123.924,
+      "p99_late_us": 511.052
+     },
+     {
+      "early": 0,
+      "max_late_us": 2543.083,
+      "p50_late_us": 126.522,
+      "p99_late_us": 414.692
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "sleeps": 2000
+    },
+    "max_load": 2.02001953125
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 2957.512,
+     "p50_late_us": 69.512,
+     "p99_late_us": 443.947
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      1898.071,
+      4199.401
+     ],
+     "p50_late_us": [
+      65.079,
+      71.659
+     ],
+     "p99_late_us": [
+      279.366,
+      634.298
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 4199.401,
+      "p50_late_us": 69.512,
+      "p99_late_us": 582.575
+     },
+     {
+      "early": 0,
+      "max_late_us": 2957.512,
+      "p50_late_us": 71.659,
+      "p99_late_us": 634.298
+     },
+     {
+      "early": 0,
+      "max_late_us": 3635.946,
+      "p50_late_us": 67.093,
+      "p99_late_us": 279.366
+     },
+     {
+      "early": 0,
+      "max_late_us": 1898.071,
+      "p50_late_us": 65.079,
+      "p99_late_us": 443.947
+     },
+     {
+      "early": 0,
+      "max_late_us": 1987.028,
+      "p50_late_us": 69.597,
+      "p99_late_us": 362.704
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "sleeps": 2000
+    },
+    "max_load": 1.78271484375
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 4418.794,
+     "p50_late_us": 117.839,
+     "p99_late_us": 517.012
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      2798.017,
+      8525.234
+     ],
+     "p50_late_us": [
+      113.095,
+      119.63
+     ],
+     "p99_late_us": [
+      398.196,
+      654.337
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 8525.234,
+      "p50_late_us": 113.095,
+      "p99_late_us": 398.196
+     },
+     {
+      "early": 0,
+      "max_late_us": 2798.017,
+      "p50_late_us": 116.957,
+      "p99_late_us": 517.012
+     },
+     {
+      "early": 0,
+      "max_late_us": 4979.546,
+      "p50_late_us": 117.839,
+      "p99_late_us": 494.678
+     },
+     {
+      "early": 0,
+      "max_late_us": 4068.129,
+      "p50_late_us": 119.63,
+      "p99_late_us": 654.337
+     },
+     {
+      "early": 0,
+      "max_late_us": 4418.794,
+      "p50_late_us": 119.174,
+      "p99_late_us": 593.804
+     }
+    ],
+    "work": {
+     "sleeps": 2000
+    },
+    "max_load": 1.46728515625
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 3168.417,
+     "p50_late_us": 72.244,
+     "p99_late_us": 613.01
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      1642.096,
+      22904.454
+     ],
+     "p50_late_us": [
+      70.052,
+      81.954
+     ],
+     "p99_late_us": [
+      354.526,
+      854.546
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 3168.417,
+      "p50_late_us": 74.596,
+      "p99_late_us": 613.01
+     },
+     {
+      "early": 0,
+      "max_late_us": 1642.096,
+      "p50_late_us": 71.651,
+      "p99_late_us": 354.526
+     },
+     {
+      "early": 0,
+      "max_late_us": 22904.454,
+      "p50_late_us": 72.244,
+      "p99_late_us": 673.238
+     },
+     {
+      "early": 0,
+      "max_late_us": 4781.744,
+      "p50_late_us": 81.954,
+      "p99_late_us": 854.546
+     },
+     {
+      "early": 0,
+      "max_late_us": 2532.621,
+      "p50_late_us": 70.052,
+      "p99_late_us": 401.381
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "sleeps": 2000
+    },
+    "max_load": 1.31494140625
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 2366.766,
+     "p50_late_us": 70.442,
+     "p99_late_us": 485.852
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      2322.168,
+      4429.927
+     ],
+     "p50_late_us": [
+      61.865,
+      74.122
+     ],
+     "p99_late_us": [
+      457.97,
+      684.393
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 4429.927,
+      "p50_late_us": 61.865,
+      "p99_late_us": 477.631
+     },
+     {
+      "early": 0,
+      "max_late_us": 2353.117,
+      "p50_late_us": 70.442,
+      "p99_late_us": 457.97
+     },
+     {
+      "early": 0,
+      "max_late_us": 2366.766,
+      "p50_late_us": 70.623,
+      "p99_late_us": 684.393
+     },
+     {
+      "early": 0,
+      "max_late_us": 4406.765,
+      "p50_late_us": 68.726,
+      "p99_late_us": 485.852
+     },
+     {
+      "early": 0,
+      "max_late_us": 2322.168,
+      "p50_late_us": 74.122,
+      "p99_late_us": 578.692
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "sleeps": 2000
+    },
+    "max_load": 1.1123046875
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_accuracy",
+   "params": {
+    "count": 2000,
+    "interval_us": 1000
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "early": 0,
+     "max_late_us": 5467.863,
+     "p50_late_us": 1142.869,
+     "p99_late_us": 1931.599
+    },
+    "spread": {
+     "early": [
+      0,
+      0
+     ],
+     "max_late_us": [
+      3933.752,
+      56773.312
+     ],
+     "p50_late_us": [
+      1133.751,
+      1155.361
+     ],
+     "p99_late_us": [
+      1793.044,
+      2235.33
+     ]
+    },
+    "samples": [
+     {
+      "early": 0,
+      "max_late_us": 5467.863,
+      "p50_late_us": 1152.148,
+      "p99_late_us": 1942.988
+     },
+     {
+      "early": 0,
+      "max_late_us": 4901.004,
+      "p50_late_us": 1133.751,
+      "p99_late_us": 1837.772
+     },
+     {
+      "early": 0,
+      "max_late_us": 56773.312,
+      "p50_late_us": 1135.431,
+      "p99_late_us": 1793.044
+     },
+     {
+      "early": 0,
+      "max_late_us": 3933.752,
+      "p50_late_us": 1155.361,
+      "p99_late_us": 2235.33
+     },
+     {
+      "early": 0,
+      "max_late_us": 43835.914,
+      "p50_late_us": 1142.869,
+      "p99_late_us": 1931.599
+     }
+    ],
+    "work": {
+     "sleeps": 2000
+    },
+    "max_load": 0.94091796875
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "arm_cancel_ns": 502.16207,
+     "fire_cpu_ns": 1018.43,
+     "last_late_ms": 0.053261
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      472.11938,
+      740.35125
+     ],
+     "fire_cpu_ns": [
+      999.55,
+      1087.6999999999998
+     ],
+     "last_late_ms": [
+      0.017329,
+      0.094354
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 592.1801,
+      "fire_cpu_ns": 1018.43,
+      "last_late_ms": 0.094354
+     },
+     {
+      "arm_cancel_ns": 740.35125,
+      "fire_cpu_ns": 1087.6999999999998,
+      "last_late_ms": 0.091279
+     },
+     {
+      "arm_cancel_ns": 472.11938,
+      "fire_cpu_ns": 999.55,
+      "last_late_ms": 0.043475
+     },
+     {
+      "arm_cancel_ns": 502.16207,
+      "fire_cpu_ns": 1036.65,
+      "last_late_ms": 0.017329
+     },
+     {
+      "arm_cancel_ns": 492.36067,
+      "fire_cpu_ns": 1001.33,
+      "last_late_ms": 0.053261
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.61865234375
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "arm_cancel_ns": 527.47077,
+     "fire_cpu_ns": 1274.42,
+     "last_late_ms": 0.041239
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      398.71397,
+      936.97971
+     ],
+     "fire_cpu_ns": [
+      1248.2800000000002,
+      1368.72
+     ],
+     "last_late_ms": [
+      0.022919,
+      0.060828
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 511.10516,
+      "fire_cpu_ns": 1248.2800000000002,
+      "last_late_ms": 0.022919
+     },
+     {
+      "arm_cancel_ns": 527.47077,
+      "fire_cpu_ns": 1274.42,
+      "last_late_ms": 0.041239
+     },
+     {
+      "arm_cancel_ns": 936.97971,
+      "fire_cpu_ns": 1289.86,
+      "last_late_ms": 0.046058
+     },
+     {
+      "arm_cancel_ns": 398.71397,
+      "fire_cpu_ns": 1267.71,
+      "last_late_ms": 0.038693
+     },
+     {
+      "arm_cancel_ns": 759.34605,
+      "fire_cpu_ns": 1368.72,
+      "last_late_ms": 0.060828
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.61865234375
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "arm_cancel_ns": 601.85231,
+     "fire_cpu_ns": 1470.85,
+     "last_late_ms": 52.242949
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      582.89218,
+      700.89469
+     ],
+     "fire_cpu_ns": [
+      1239.96,
+      1602.9400000000003
+     ],
+     "last_late_ms": [
+      25.237552,
+      59.613069
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 582.89218,
+      "fire_cpu_ns": 1357.6,
+      "last_late_ms": 34.279647
+     },
+     {
+      "arm_cancel_ns": 587.57088,
+      "fire_cpu_ns": 1239.96,
+      "last_late_ms": 25.237552
+     },
+     {
+      "arm_cancel_ns": 601.85231,
+      "fire_cpu_ns": 1470.85,
+      "last_late_ms": 59.613069
+     },
+     {
+      "arm_cancel_ns": 610.04435,
+      "fire_cpu_ns": 1550.32,
+      "last_late_ms": 52.242949
+     },
+     {
+      "arm_cancel_ns": 700.89469,
+      "fire_cpu_ns": 1602.9400000000003,
+      "last_late_ms": 57.751092
+     }
+    ],
+    "work": {
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.61865234375
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "arm_cancel_ns": 683.20195,
+     "fire_cpu_ns": 1439.2,
+     "last_late_ms": 0.031977
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      678.8488,
+      706.86769
+     ],
+     "fire_cpu_ns": [
+      1293.31,
+      1450.03
+     ],
+     "last_late_ms": [
+      0.03152,
+      0.046405
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 678.8488,
+      "fire_cpu_ns": 1293.31,
+      "last_late_ms": 0.03152
+     },
+     {
+      "arm_cancel_ns": 706.86769,
+      "fire_cpu_ns": 1450.03,
+      "last_late_ms": 0.034653
+     },
+     {
+      "arm_cancel_ns": 705.13377,
+      "fire_cpu_ns": 1431.9700000000003,
+      "last_late_ms": 0.046405
+     },
+     {
+      "arm_cancel_ns": 682.68484,
+      "fire_cpu_ns": 1439.2,
+      "last_late_ms": 0.031977
+     },
+     {
+      "arm_cancel_ns": 683.20195,
+      "fire_cpu_ns": 1442.64,
+      "last_late_ms": 0.031886
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.61865234375
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "arm_cancel_ns": 565.22933,
+     "fire_cpu_ns": 1268.41,
+     "last_late_ms": 0.022576
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      461.61701,
+      622.03893
+     ],
+     "fire_cpu_ns": [
+      1190.86,
+      1407.11
+     ],
+     "last_late_ms": [
+      0.012942,
+      0.029917
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 461.61701,
+      "fire_cpu_ns": 1190.86,
+      "last_late_ms": 0.029917
+     },
+     {
+      "arm_cancel_ns": 617.32442,
+      "fire_cpu_ns": 1251.13,
+      "last_late_ms": 0.02273
+     },
+     {
+      "arm_cancel_ns": 565.22933,
+      "fire_cpu_ns": 1279.91,
+      "last_late_ms": 0.022576
+     },
+     {
+      "arm_cancel_ns": 471.45682,
+      "fire_cpu_ns": 1268.41,
+      "last_late_ms": 0.012942
+     },
+     {
+      "arm_cancel_ns": 622.03893,
+      "fire_cpu_ns": 1407.11,
+      "last_late_ms": 0.013917
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.6494140625
+   },
+   "problems": []
+  },
+  {
+   "workload": "timer_churn",
+   "params": {
+    "count": 100000
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "arm_cancel_ns": 539.83188,
+     "fire_cpu_ns": 1493.34,
+     "last_late_ms": 6.781625
+    },
+    "spread": {
+     "arm_cancel_ns": [
+      428.6228,
+      663.30187
+     ],
+     "fire_cpu_ns": [
+      1389.43,
+      1872.41
+     ],
+     "last_late_ms": [
+      1.089899,
+      42.136987
+     ]
+    },
+    "samples": [
+     {
+      "arm_cancel_ns": 539.83188,
+      "fire_cpu_ns": 1480.65,
+      "last_late_ms": 1.784828
+     },
+     {
+      "arm_cancel_ns": 428.6228,
+      "fire_cpu_ns": 1389.43,
+      "last_late_ms": 1.089899
+     },
+     {
+      "arm_cancel_ns": 655.03969,
+      "fire_cpu_ns": 1872.41,
+      "last_late_ms": 42.136987
+     },
+     {
+      "arm_cancel_ns": 459.33083,
+      "fire_cpu_ns": 1493.34,
+      "last_late_ms": 6.781625
+     },
+     {
+      "arm_cancel_ns": 663.30187,
+      "fire_cpu_ns": 1558.65,
+      "last_late_ms": 14.212984
+     }
+    ],
+    "work": {
+     "cancelled": 100000,
+     "fired": 100000
+    },
+    "max_load": 0.6494140625
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "p50_us": 42.203,
+     "p99_us": 122.285,
+     "round_trips_per_s": 21353.71645903344
+    },
+    "spread": {
+     "p50_us": [
+      41.521,
+      43.904
+     ],
+     "p99_us": [
+      114.584,
+      128.651
+     ],
+     "round_trips_per_s": [
+      20168.553874774618,
+      21776.229254485
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 43.904,
+      "p99_us": 128.651,
+      "round_trips_per_s": 20273.03018032785
+     },
+     {
+      "p50_us": 42.203,
+      "p99_us": 122.285,
+      "round_trips_per_s": 21353.71645903344
+     },
+     {
+      "p50_us": 42.067,
+      "p99_us": 114.584,
+      "round_trips_per_s": 21776.229254485
+     },
+     {
+      "p50_us": 41.521,
+      "p99_us": 119.533,
+      "round_trips_per_s": 21663.563031434667
+     },
+     {
+      "p50_us": 43.116,
+      "p99_us": 128.307,
+      "round_trips_per_s": 20168.553874774618
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "round_trips": 200000
+    },
+    "max_load": 1.0322265625
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "p50_us": 43.892,
+     "p99_us": 128.542,
+     "round_trips_per_s": 20754.425565109974
+    },
+    "spread": {
+     "p50_us": [
+      42.256,
+      44.42
+     ],
+     "p99_us": [
+      115.877,
+      140.135
+     ],
+     "round_trips_per_s": [
+      20631.61402415271,
+      21494.83029158589
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 43.892,
+      "p99_us": 124.029,
+      "round_trips_per_s": 20643.585258336538
+     },
+     {
+      "p50_us": 42.256,
+      "p99_us": 115.877,
+      "round_trips_per_s": 21494.83029158589
+     },
+     {
+      "p50_us": 42.629,
+      "p99_us": 128.542,
+      "round_trips_per_s": 21285.497378179454
+     },
+     {
+      "p50_us": 44.42,
+      "p99_us": 140.135,
+      "round_trips_per_s": 20631.61402415271
+     },
+     {
+      "p50_us": 43.96,
+      "p99_us": 137.203,
+      "round_trips_per_s": 20754.425565109974
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "round_trips": 200000
+    },
+    "max_load": 1.291015625
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "p50_us": 42.691,
+     "p99_us": 131.244,
+     "round_trips_per_s": 20949.569380705783
+    },
+    "spread": {
+     "p50_us": [
+      42.498,
+      44.436
+     ],
+     "p99_us": [
+      118.08,
+      139.852
+     ],
+     "round_trips_per_s": [
+      20401.11875691761,
+      21257.64252784543
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 42.498,
+      "p99_us": 131.244,
+      "round_trips_per_s": 21257.64252784543
+     },
+     {
+      "p50_us": 42.691,
+      "p99_us": 133.21,
+      "round_trips_per_s": 21206.38314495054
+     },
+     {
+      "p50_us": 44.436,
+      "p99_us": 139.852,
+      "round_trips_per_s": 20401.11875691761
+     },
+     {
+      "p50_us": 42.591,
+      "p99_us": 125.031,
+      "round_trips_per_s": 20949.569380705783
+     },
+     {
+      "p50_us": 42.78,
+      "p99_us": 118.08,
+      "round_trips_per_s": 20796.846937794082
+     }
+    ],
+    "work": {
+     "round_trips": 200000
+    },
+    "max_load": 1.37158203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "p50_us": 42.626,
+     "p99_us": 117.297,
+     "round_trips_per_s": 21303.561073859542
+    },
+    "spread": {
+     "p50_us": [
+      42.014,
+      43.408
+     ],
+     "p99_us": [
+      115.038,
+      121.239
+     ],
+     "round_trips_per_s": [
+      20726.48675903508,
+      21654.301999232157
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 43.408,
+      "p99_us": 117.297,
+      "round_trips_per_s": 21106.904854292927
+     },
+     {
+      "p50_us": 42.626,
+      "p99_us": 119.859,
+      "round_trips_per_s": 21303.561073859542
+     },
+     {
+      "p50_us": 43.285,
+      "p99_us": 121.239,
+      "round_trips_per_s": 20726.48675903508
+     },
+     {
+      "p50_us": 42.302,
+      "p99_us": 115.038,
+      "round_trips_per_s": 21492.291300990193
+     },
+     {
+      "p50_us": 42.014,
+      "p99_us": 115.254,
+      "round_trips_per_s": 21654.301999232157
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "round_trips": 200000
+    },
+    "max_load": 1.65869140625
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "p50_us": 42.975,
+     "p99_us": 121.176,
+     "round_trips_per_s": 21035.36672199732
+    },
+    "spread": {
+     "p50_us": [
+      41.025,
+      43.649
+     ],
+     "p99_us": [
+      118.155,
+      129.261
+     ],
+     "round_trips_per_s": [
+      20404.446420495377,
+      21739.043967735226
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 41.547,
+      "p99_us": 118.155,
+      "round_trips_per_s": 21739.043967735226
+     },
+     {
+      "p50_us": 43.546,
+      "p99_us": 121.176,
+      "round_trips_per_s": 20836.97551727525
+     },
+     {
+      "p50_us": 41.025,
+      "p99_us": 121.459,
+      "round_trips_per_s": 21703.071117103722
+     },
+     {
+      "p50_us": 43.649,
+      "p99_us": 129.261,
+      "round_trips_per_s": 20404.446420495377
+     },
+     {
+      "p50_us": 42.975,
+      "p99_us": 118.439,
+      "round_trips_per_s": 21035.36672199732
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "round_trips": 200000
+    },
+    "max_load": 1.669921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_pingpong",
+   "params": {
+    "count": 200000
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "p50_us": 42.123,
+     "p99_us": 108.427,
+     "round_trips_per_s": 21819.233646473527
+    },
+    "spread": {
+     "p50_us": [
+      40.523,
+      42.312
+     ],
+     "p99_us": [
+      104.382,
+      114.146
+     ],
+     "round_trips_per_s": [
+      21283.989664570818,
+      22690.052954517538
+     ]
+    },
+    "samples": [
+     {
+      "p50_us": 42.278,
+      "p99_us": 107.901,
+      "round_trips_per_s": 21819.233646473527
+     },
+     {
+      "p50_us": 40.523,
+      "p99_us": 104.382,
+      "round_trips_per_s": 22690.052954517538
+     },
+     {
+      "p50_us": 40.632,
+      "p99_us": 110.2,
+      "round_trips_per_s": 22004.515211217684
+     },
+     {
+      "p50_us": 42.123,
+      "p99_us": 114.146,
+      "round_trips_per_s": 21283.989664570818
+     },
+     {
+      "p50_us": 42.312,
+      "p99_us": 108.427,
+      "round_trips_per_s": 21806.880125807485
+     }
+    ],
+    "work": {
+     "round_trips": 200000
+    },
+    "max_load": 1.44091796875
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "epoll",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "epoll"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "posts_per_s": 1304110.305358517
+    },
+    "spread": {
+     "posts_per_s": [
+      1058718.3003482933,
+      1488706.469513835
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 1467653.2449970653
+     },
+     {
+      "posts_per_s": 1488706.469513835
+     },
+     {
+      "posts_per_s": 1058718.3003482933
+     },
+     {
+      "posts_per_s": 1067155.6880572578
+     },
+     {
+      "posts_per_s": 1304110.305358517
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "posts": 2000000
+    },
+    "max_load": 1.42578125
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "vio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/vio/bench_vio",
+    "env": {
+     "VIO_BACKEND": "io_uring"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "45f78b1",
+    "metrics": {
+     "posts_per_s": 1071645.5145810822
+    },
+    "spread": {
+     "posts_per_s": [
+      969114.0873951804,
+      1376642.9614255282
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 1049297.4176259607
+     },
+     {
+      "posts_per_s": 969114.0873951804
+     },
+     {
+      "posts_per_s": 1071645.5145810822
+     },
+     {
+      "posts_per_s": 1165944.527458464
+     },
+     {
+      "posts_per_s": 1376642.9614255282
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "posts": 2000000
+    },
+    "max_load": 1.47216796875
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "libuv",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/libuv/bench_libuv"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.0",
+    "metrics": {
+     "posts_per_s": 12327899.441817367
+    },
+    "spread": {
+     "posts_per_s": [
+      9110466.321906274,
+      14874096.352165055
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 12327899.441817367
+     },
+     {
+      "posts_per_s": 12821515.446582902
+     },
+     {
+      "posts_per_s": 9110466.321906274
+     },
+     {
+      "posts_per_s": 12050384.924843134
+     },
+     {
+      "posts_per_s": 14874096.352165055
+     }
+    ],
+    "work": {
+     "posts": 2000000
+    },
+    "max_load": 1.43408203125
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "posts_per_s": 1638838.7866509282
+    },
+    "spread": {
+     "posts_per_s": [
+      1339312.7083127226,
+      1944908.8408633
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 1944908.8408633
+     },
+     {
+      "posts_per_s": 1339312.7083127226
+     },
+     {
+      "posts_per_s": 1631370.3060965554
+     },
+     {
+      "posts_per_s": 1943013.4762780627
+     },
+     {
+      "posts_per_s": 1638838.7866509282
+     }
+    ],
+    "work": {
+     "backend": "epoll",
+     "posts": 2000000
+    },
+    "max_load": 1.4794921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "asio",
+    "variant": "io_uring",
+    "binary": "/home/user/vio-bench/build/cpp/asio/bench_asio_uring"
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.38.2",
+    "metrics": {
+     "posts_per_s": 1845899.8656674984
+    },
+    "spread": {
+     "posts_per_s": [
+      1549725.5469375472,
+      2170726.5372553235
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 1571016.6518723897
+     },
+     {
+      "posts_per_s": 2150335.11677218
+     },
+     {
+      "posts_per_s": 1845899.8656674984
+     },
+     {
+      "posts_per_s": 2170726.5372553235
+     },
+     {
+      "posts_per_s": 1549725.5469375472
+     }
+    ],
+    "work": {
+     "backend": "io_uring",
+     "posts": 2000000
+    },
+    "max_load": 1.4794921875
+   },
+   "problems": []
+  },
+  {
+   "workload": "wake_flood",
+   "params": {
+    "count": 2000000
+   },
+   "target": {
+    "library": "tokio",
+    "variant": "default",
+    "binary": "/home/user/vio-bench/rust/target/release/bench_tokio",
+    "env": {
+     "BENCH_TLS": "rustls"
+    }
+   },
+   "summary": {
+    "status": "ok",
+    "runs": 5,
+    "library_version": "1.53.3",
+    "metrics": {
+     "posts_per_s": 538475.8783434167
+    },
+    "spread": {
+     "posts_per_s": [
+      465268.84461919207,
+      613369.2292299618
+     ]
+    },
+    "samples": [
+     {
+      "posts_per_s": 465268.84461919207
+     },
+     {
+      "posts_per_s": 613369.2292299618
+     },
+     {
+      "posts_per_s": 538475.8783434167
+     },
+     {
+      "posts_per_s": 511614.7488878957
+     },
+     {
+      "posts_per_s": 579308.2341400089
+     }
+    ],
+    "work": {
+     "posts": 2000000
+    },
+    "max_load": 1.52734375
+   },
+   "problems": []
+  }
+ ]
+}
