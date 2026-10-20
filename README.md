@@ -27,10 +27,12 @@ cargo build --release --manifest-path rust/Cargo.toml
 ## Run
 
 The UDP workloads ask for 4 MiB socket buffers, and the kernel quietly caps them unless it is
-allowed to give that much:
+allowed to give that much. TCP should use cubic: with BBR, and a qdisc other than `fq`, TCP paces
+itself with a kernel timer that can cost more CPU than the choice of event loop changes.
 
 ```bash
 sudo sysctl -w net.core.rmem_max=4194304 net.core.wmem_max=4194304
+sudo sysctl -w net.ipv4.tcp_congestion_control=cubic
 ```
 
 ```bash
@@ -40,5 +42,6 @@ python3 scripts/run.py --only vio,asio --workload tcp_rr,tls_bulk
 ```
 
 The runner writes `results/<date>-<host>.md` and `.json`, with the machine, the compiler and
-build flags, the UDP buffer limits and the load average during each measurement. Run it on an
+build flags, the UDP buffer limits, the TCP congestion control and qdisc, and the load average
+during each measurement. Run it on an
 idle machine: a busy one moves latency and thread-pool numbers by several times.

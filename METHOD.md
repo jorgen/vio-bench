@@ -41,7 +41,10 @@ own BoringSSL.
    `SO_SNDBUF` and `SO_RCVBUF` to 4 MiB. Nothing else is changed from the library's default.
    The kernel silently caps both buffers at `net.core.wmem_max` and `net.core.rmem_max`, so the
    host must allow 4 MiB (`sysctl -w net.core.rmem_max=4194304 net.core.wmem_max=4194304`); the
-   runner records both values with the results.
+   runner records both values with the results. TCP uses the host's congestion control, which the
+   runner also records, with the default qdisc. Use cubic. With BBR and a qdisc other than `fq`,
+   TCP paces itself with a kernel timer; on a 4-vCPU VM that timer took 10 to 11% of `tls_bulk`'s
+   CPU, on both epoll and io_uring, which is more than the backend changed.
 4. **Loopback only.** Servers bind `127.0.0.1` port 0 and hand the chosen port to the client.
 5. **The runner owns the parameters.** Every parameter comes on the command line; a binary has
    no defaults of its own and refuses to run if one is missing.

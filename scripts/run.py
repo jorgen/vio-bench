@@ -155,6 +155,8 @@ def machine_info(cpp_build):
         "governor": read_text("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"),
         "rmem_max": read_text("/proc/sys/net/core/rmem_max"),
         "wmem_max": read_text("/proc/sys/net/core/wmem_max"),
+        "tcp_congestion_control": read_text("/proc/sys/net/ipv4/tcp_congestion_control"),
+        "default_qdisc": read_text("/proc/sys/net/core/default_qdisc"),
         "io_uring_disabled": read_text("/proc/sys/kernel/io_uring_disabled"),
         "cxx": command_output([compiler, "--version"]),
         "cxx_build": f"{cache.get('CMAKE_BUILD_TYPE', 'unknown')} {cache.get('CMAKE_CXX_FLAGS', '')} {cache.get('CMAKE_CXX_FLAGS_RELEASE', '')}".strip(),
@@ -237,6 +239,7 @@ def write_markdown(path, info, results, targets, repeat):
     lines.append(f"C++: {info['cxx']}, {info['cxx_build']}. Rust: {info['rustc']}.")
     lines.append(f"UDP buffer limits: rmem_max {info['rmem_max']}, wmem_max {info['wmem_max']}. "
                  f"io_uring_disabled {info['io_uring_disabled']}.")
+    lines.append(f"TCP congestion control {info['tcp_congestion_control']}, default qdisc {info['default_qdisc']}.")
     versions = {}
     for entry in results:
         if entry["summary"].get("library_version"):
